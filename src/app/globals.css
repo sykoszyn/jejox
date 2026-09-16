@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+/* =====================================================
+   SaludSimple - Design tokens
+   Paleta propia: verde salvia (calma/salud), tierra calida
+   para acentos, crema en vez de blanco puro (menos deslumbre).
+   Modo claro es el predeterminado (publico objetivo: adultos
+   mayores). Alto contraste y tamano de texto son ajustables.
+   ===================================================== */
+:root {
+  --color-bg: #faf8f4;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f2efe8;
+  --color-border: #ddd6c9;
+  --color-ink: #1f2a24;
+  --color-ink-muted: #4b5a52;
+
+  --color-primary: #0f6e58;
+  --color-primary-dark: #0a4f3f;
+  --color-primary-contrast: #ffffff;
+  --color-primary-soft: #e3f1ec;
+
+  --color-accent: #c1531d;
+  --color-accent-dark: #973f14;
+  --color-accent-contrast: #ffffff;
+  --color-accent-soft: #fbe9dd;
+
+  --color-success: #1b7a3d;
+  --color-success-soft: #e4f4e8;
+  --color-warning: #916500;
+  --color-warning-soft: #fdf0cf;
+  --color-danger: #b3261e;
+  --color-danger-soft: #fbe6e4;
+
+  --color-focus-ring: #0a4f3f;
+
+  --radius-card: 1rem;
+  --radius-button: 0.85rem;
+
+  --font-scale: 1;
+}
+
+:root[data-theme='oscuro'] {
+  --color-bg: #121815;
+  --color-surface: #1b2420;
+  --color-surface-muted: #222d27;
+  --color-border: #354039;
+  --color-ink: #f2f1ea;
+  --color-ink-muted: #c3cbc4;
+
+  --color-primary: #4fd3a8;
+  --color-primary-dark: #2fae86;
+  --color-primary-contrast: #08201a;
+  --color-primary-soft: #1d332a;
+
+  --color-accent: #ffa768;
+  --color-accent-dark: #ff8c3c;
+  --color-accent-contrast: #2a1200;
+  --color-accent-soft: #3a2415;
+
+  --color-success: #5fd57f;
+  --color-success-soft: #1c3324;
+  --color-warning: #ffcf5c;
+  --color-warning-soft: #3a2e0c;
+  --color-danger: #ff8079;
+  --color-danger-soft: #3a1614;
+
+  --color-focus-ring: #4fd3a8;
+}
+
+:root[data-contrast='alto'] {
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-border: #000000;
+  --color-ink: #000000;
+  --color-ink-muted: #202020;
+  --color-primary: #004d3d;
+  --color-primary-soft: #d7ede6;
+  --color-accent: #7a2e00;
+  --color-accent-soft: #f6dcc9;
+  --color-focus-ring: #000000;
+}
+
+:root[data-theme='oscuro'][data-contrast='alto'] {
+  --color-bg: #000000;
+  --color-surface: #000000;
+  --color-border: #ffffff;
+  --color-ink: #ffffff;
+  --color-ink-muted: #eaeaea;
+  --color-primary: #6fffce;
+  --color-primary-soft: #073c2f;
+  --color-accent: #ffb37a;
+  --color-accent-soft: #4a2a10;
+  --color-focus-ring: #ffffff;
+}
+
+:root[data-text-size='grande'] {
+  --font-scale: 1.15;
+}
+
+:root[data-text-size='muy_grande'] {
+  --font-scale: 1.3;
+}
+
+@theme inline {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-border: var(--color-border);
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-contrast: var(--color-primary-contrast);
+  --color-primary-soft: var(--color-primary-soft);
+  --color-accent: var(--color-accent);
+  --color-accent-dark: var(--color-accent-dark);
+  --color-accent-contrast: var(--color-accent-contrast);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-success: var(--color-success);
+  --color-success-soft: var(--color-success-soft);
+  --color-warning: var(--color-warning);
+  --color-warning-soft: var(--color-warning-soft);
+  --color-danger: var(--color-danger);
+  --color-danger-soft: var(--color-danger-soft);
+  --font-sans: var(--font-body);
+}
+
+html {
+  font-size: calc(16px * var(--font-scale));
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  min-height: 100dvh;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: 0.35rem;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.tap-target {
+  min-height: 3rem;
+  min-width: 3rem;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 0.5rem 0;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+@media print {
+  .no-print,
+  header,
+  nav {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff;
+  }
+}
