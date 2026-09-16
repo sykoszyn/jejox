@@ -258,8 +258,8 @@ Dos mecanismos trabajan juntos, uno para cuando el teléfono está bloqueado
 o la app está cerrada, y otro para cuando está abierta:
 
 - **Reintento del lado del servidor**: `/api/cron/reminders` no solo
-  dispara una vez a la hora exacta — cada vez que se ejecuta (por
-  ejemplo cada 5 minutos, ver `vercel.json`), revisa si la toma sigue sin
+  dispara una vez a la hora exacta — cada vez que se ejecuta (ver más
+  abajo cómo configurar que corra seguido), revisa si la toma sigue sin
   resolver (nadie tocó "Ya la tomé" ni "Omitir") y, si es así, vuelve a
   enviar la notificación con el mismo `tag` y `renotify: true`. Eso hace
   que Android vuelva a sonar y vibrar en cada reintento, en vez de
@@ -284,22 +284,34 @@ seguido — ver la limitación del plan gratuito de Vercel más abajo.
 
 ### Cómo configurar el cron en Vercel
 
-`vercel.json` ya incluye:
+**Importante**: el plan gratuito ("Hobby") de Vercel no deja programar un
+Cron Job propio de Vercel más de una vez por día — si `vercel.json` pide
+`*/5 * * * *` (cada 5 minutos), el deploy directamente se bloquea con el
+error "Hobby accounts are limited to daily cron jobs". Por eso
+`vercel.json` viene con una sola ejecución diaria por defecto:
 
 ```json
 {
-  "crons": [{ "path": "/api/cron/reminders", "schedule": "*/5 * * * *" }]
+  "crons": [{ "path": "/api/cron/reminders", "schedule": "0 13 * * *" }]
 }
 ```
 
-**Importante**: el plan gratuito ("Hobby") de Vercel limita los Cron Jobs a
-una ejecución por día; para recordatorios cada pocos minutos hace falta el
-plan Pro. Alternativas mientras tanto:
+Con una sola corrida al día, el sistema de recordatorios (y la escalación
+de notificaciones descripta más abajo) prácticamente no cumple su función:
+solo va a alcanzar a las tomas programadas dentro de la ventana de
+reintento (20 minutos) alrededor del horario fijo del cron. Para que los
+recordatorios funcionen de verdad, elegí una de estas dos opciones:
 
-- Usar un servicio externo gratuito (por ejemplo, cron-job.org o
-  UptimeRobot) que llame a `https://tu-dominio/api/cron/reminders` cada 5
-  minutos, enviando el header `Authorization: Bearer <CRON_SECRET>`.
-- Aceptar recordatorios menos frecuentes en el plan gratuito.
+- **Recomendada, sin pagar Vercel Pro**: un servicio externo gratuito de
+  cron (por ejemplo [cron-job.org](https://cron-job.org) o UptimeRobot)
+  que llame a `https://tu-dominio/api/cron/reminders` cada 1-5 minutos,
+  enviando el header `Authorization: Bearer <CRON_SECRET>`. El límite de
+  Vercel es sobre *su propio* sistema de Cron Jobs, no sobre quién puede
+  llamar a esa URL — un servicio externo no tiene esa restricción. Podés
+  dejar `vercel.json` como está (o borrar la sección `crons`) y manejar
+  todo desde el servicio externo.
+- **Plan Pro de Vercel**: cambiá el `schedule` de `vercel.json` a algo
+  como `*/5 * * * *` (cada 5 minutos) — ahí Vercel sí lo permite.
 
 ### Cómo probar las notificaciones
 
