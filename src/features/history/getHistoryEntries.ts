@@ -1,6 +1,7 @@
 import type { createClient } from '@/lib/supabase/server';
 import type { EnabledMetrics } from '@/types/database';
 import { GLUCOSE_CONTEXT_LABELS } from '@/lib/measurements/config';
+import { getZonedDateParts } from '@/lib/utils/datetime';
 
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -242,11 +243,17 @@ export async function getHistoryEntries(
   return entries.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 }
 
-export function groupByDay(entries: HistoryEntry[]) {
+/**
+ * Agrupa por día de calendario en `timezone` (la del paciente), no en UTC:
+ * de lo contrario, cerca de la medianoche una toma quedaría bajo el título
+ * del día equivocado.
+ */
+export function groupByDay(entries: HistoryEntry[], timezone: string) {
   const groups = new Map<string, HistoryEntry[]>();
   for (const entry of entries) {
-    const day = entry.timestamp.slice(0, 10);
-    groups.set(day, [...(groups.get(day) ?? []), entry]);
+    const { year, month, day } = getZonedDateParts(new Date(entry.timestamp), timezone);
+    const key = `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    groups.set(key, [...(groups.get(key) ?? []), entry]);
   }
   return Array.from(groups.entries());
 }

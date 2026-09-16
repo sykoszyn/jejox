@@ -390,18 +390,16 @@ Documentadas explícitamente en vez de prometidas y no cumplidas:
   intermedios: solo el sonido dentro de la app, si la persona la abre.
 - **Cron en el plan gratuito de Vercel**: limitado a una vez por día (ver
   sección de PWA más arriba para alternativas).
-- **Formato de fechas/horas fuera del dashboard, el detalle de un
-  medicamento y el informe**: esas tres pantallas ya calculan y muestran
-  todo en la zona horaria real del paciente (`profiles.timezone`). El
-  resto de las pantallas (por ejemplo las etiquetas de fecha en
-  Historial) todavía usan el huso horario del servidor para el
-  *formato* de fecha/hora que se muestra en pantalla — la hora guardada
-  en la base es siempre correcta (UTC real), es solo una cuestión de
-  cómo se la formatea para mostrarla. El efecto práctico es un
-  corrimiento de unas pocas horas en esas etiquetas para usuarios muy
-  lejos de UTC, no un dato mal guardado. Si te interesa, es una extensión
-  directa: pasarle `profile.timezone` a `formatTime`/`formatDate*` (ya
-  aceptan un segundo parámetro opcional para esto) en esas pantallas.
+- **Zona horaria y formato de hora**: todas las pantallas que muestran
+  fecha/hora (dashboard, medicamentos, mediciones, historial, informe)
+  calculan y formatean con la zona horaria real del paciente
+  (`profiles.timezone`, detectada del navegador en el onboarding). El
+  valor por defecto antes de detectarla es `America/Argentina/Buenos_Aires`
+  (`DEFAULT_TIMEZONE` en `src/lib/utils/datetime.ts`), y la hora siempre
+  se muestra en formato 24 horas (`hour12: false` explícito en
+  `formatTime`, porque `Intl` con locale `es-AR` arma "05:30 p. m." si no
+  se lo pedís así). Si tu público no es de Argentina, cambiá
+  `DEFAULT_TIMEZONE`.
 - **Cuidadores con permiso de edición**: pueden ver los datos completos
   del paciente y el sistema de permisos ya está modelado en la base de
   datos, pero la carga de mediciones "en nombre de" otra persona todavía

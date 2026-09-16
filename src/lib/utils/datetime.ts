@@ -1,3 +1,11 @@
+/**
+ * Zona horaria por defecto de la app: la mayoría de las personas que la
+ * usan están en Argentina. Se usa solo como valor inicial (antes de que
+ * el navegador detecte e informe la zona real en el onboarding) — nunca
+ * pisa la zona horaria real de un usuario ya configurado.
+ */
+export const DEFAULT_TIMEZONE = 'America/Argentina/Buenos_Aires';
+
 export interface LocalDateParts {
   year: number;
   month: number; // 1-12
@@ -89,7 +97,9 @@ export function greetingForHour(date: Date = new Date(), timeZone?: string) {
 
 export function formatTime(date: Date | string, timeZone?: string) {
   const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', timeZone });
+  // hour12: false a propósito — sin esto, Intl arma "05:30 p. m." en vez
+  // de "17:30" para es-AR, aunque el locale sea argentino.
+  return d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone });
 }
 
 export function formatDate(date: Date | string, timeZone?: string) {
@@ -113,7 +123,7 @@ export function formatDateShort(date: Date | string, timeZone?: string) {
   return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone });
 }
 
-export function resolveSimpleRange(days: number, timeZone = 'UTC') {
+export function resolveSimpleRange(days: number, timeZone = DEFAULT_TIMEZONE) {
   const now = new Date();
   const today = getZonedDateParts(now, timeZone);
   const to = zonedTimeToUtc(today.year, today.month, today.day, 23, 59, 59, timeZone);

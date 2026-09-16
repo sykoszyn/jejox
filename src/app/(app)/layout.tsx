@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { BottomNavigation } from '@/components/layout/BottomNavigation';
 import { ClientSync } from '@/features/settings/ClientSync';
 import { createClient } from '@/lib/supabase/server';
+import { DEFAULT_TIMEZONE } from '@/lib/utils/datetime';
 import type { UiPrefsPayload } from '@/lib/preferencesShared';
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
@@ -10,7 +11,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let timezone = 'UTC';
+  let timezone = DEFAULT_TIMEZONE;
   let prefs: UiPrefsPayload = { theme: 'claro', textSize: 'normal', highContrast: false };
 
   if (user) {

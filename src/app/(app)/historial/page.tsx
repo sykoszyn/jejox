@@ -5,7 +5,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { HistoryItem } from '@/components/ui/HistoryItem';
 import { getHistoryEntries, groupByDay } from '@/features/history/getHistoryEntries';
-import { formatDateLong } from '@/lib/utils/datetime';
+import { formatDateLong, getZonedDateParts, zonedTimeToUtc } from '@/lib/utils/datetime';
 import { History } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
@@ -13,30 +13,33 @@ export const metadata: Metadata = { title: 'Historial · SaludSimple' };
 
 type RangeKey = 'hoy' | '7d' | '30d' | 'personalizado';
 
-function resolveRange(range: RangeKey, from?: string, to?: string) {
-  const now = new Date();
-  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+/** Resuelve el rango pedido en la zona horaria del paciente, no la del servidor. */
+function resolveRange(range: RangeKey, timezone: string, from?: string, to?: string) {
+  const today = getZonedDateParts(new Date(), timezone);
+  const endOfToday = zonedTimeToUtc(today.year, today.month, today.day, 23, 59, 59, timezone);
 
   if (range === 'personalizado' && from && to) {
-    return { from: new Date(from).toISOString(), to: new Date(`${to}T23:59:59`).toISOString() };
+    const [fy, fm, fd] = from.split('-').map(Number);
+    const [ty, tm, td] = to.split('-').map(Number);
+    return {
+      from: zonedTimeToUtc(fy, fm, fd, 0, 0, 0, timezone).toISOString(),
+      to: zonedTimeToUtc(ty, tm, td, 23, 59, 59, timezone).toISOString(),
+    };
   }
 
-  if (range === '7d') {
-    const start = new Date(now);
-    start.setDate(start.getDate() - 6);
-    start.setHours(0, 0, 0, 0);
-    return { from: start.toISOString(), to: endOfToday.toISOString() };
-  }
-
-  if (range === '30d') {
-    const start = new Date(now);
-    start.setDate(start.getDate() - 29);
-    start.setHours(0, 0, 0, 0);
-    return { from: start.toISOString(), to: endOfToday.toISOString() };
-  }
-
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return { from: startOfToday.toISOString(), to: endOfToday.toISOString() };
+  const days = range === '7d' ? 6 : range === '30d' ? 29 : 0;
+  const startOrdinal = new Date(Date.UTC(today.year, today.month - 1, today.day));
+  startOrdinal.setUTCDate(startOrdinal.getUTCDate() - days);
+  const start = zonedTimeToUtc(
+    startOrdinal.getUTCFullYear(),
+    startOrdinal.getUTCMonth() + 1,
+    startOrdinal.getUTCDate(),
+    0,
+    0,
+    0,
+    timezone
+  );
+  return { from: start.toISOString(), to: endOfToday.toISOString() };
 }
 
 export default async function HistorialPage({
@@ -46,11 +49,11 @@ export default async function HistorialPage({
 }) {
   const params = await searchParams;
   const range = (params.rango as RangeKey) ?? 'hoy';
-  const { from, to } = resolveRange(range, params.desde, params.hasta);
-
   const { supabase, profile } = await requireProfile();
+  const { from, to } = resolveRange(range, profile.timezone, params.desde, params.hasta);
+
   const entries = await getHistoryEntries(supabase, profile.id, profile.enabled_metrics, { from, to });
-  const groups = groupByDay(entries);
+  const groups = groupByDay(entries, profile.timezone);
 
   const filters: { key: RangeKey; label: string }[] = [
     { key: 'hoy', label: 'Hoy' },
@@ -128,11 +131,15 @@ export default async function HistorialPage({
           groups.map(([day, dayEntries]) => (
             <section key={day} aria-label={day} className="flex flex-col gap-3">
               <h2 className="text-lg font-bold capitalize text-ink-muted">
-                {formatDateLong(new Date(`${day}T00:00:00`))}
+                {formatDateLong(new Date(`${day}T00:00:00Z`), 'UTC')}
               </h2>
               <div className="flex flex-col gap-2">
                 {dayEntries.map((entry) => (
-                  <HistoryItem key={`${entry.category}-${entry.id}`} entry={entry} />
+                  <HistoryItem
+                    key={`${entry.category}-${entry.id}`}
+                    entry={entry}
+                    timezone={profile.timezone}
+                  />
                 ))}
               </div>
             </section>

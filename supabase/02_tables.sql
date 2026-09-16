@@ -20,7 +20,7 @@ create table if not exists public.profiles (
   -- IANA timezone (ej. 'America/Argentina/Buenos_Aires'), detectada en el navegador.
   -- La usa el cron de recordatorios para saber a que hora local le corresponde
   -- cada horario de medicamento (los horarios se guardan sin zona horaria).
-  timezone text not null default 'UTC',
+  timezone text not null default 'America/Argentina/Buenos_Aires',
   enabled_metrics jsonb not null default '{
     "glucose": true,
     "blood_pressure": true,

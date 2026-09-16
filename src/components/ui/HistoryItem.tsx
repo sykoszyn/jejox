@@ -14,7 +14,7 @@ const ICONS = {
   note: StickyNote,
 };
 
-export function HistoryItem({ entry }: { entry: HistoryEntry }) {
+export function HistoryItem({ entry, timezone }: { entry: HistoryEntry; timezone: string }) {
   const Icon = ICONS[entry.category];
 
   return (
@@ -44,7 +44,7 @@ export function HistoryItem({ entry }: { entry: HistoryEntry }) {
         )}
       </div>
       <time dateTime={entry.timestamp} className="text-ink-muted shrink-0">
-        {formatTime(entry.timestamp)}
+        {formatTime(entry.timestamp, timezone)}
       </time>
     </Card>
   );

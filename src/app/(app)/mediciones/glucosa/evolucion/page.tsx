@@ -16,8 +16,8 @@ export default async function EvolucionGlucosaPage({
 }) {
   const { dias } = await searchParams;
   const days = Number(dias) || 30;
-  const { from, to } = resolveSimpleRange(days);
   const { supabase, profile } = await requireProfile();
+  const { from, to } = resolveSimpleRange(days, profile.timezone);
 
   const { data } = await supabase
     .from('glucose_readings')

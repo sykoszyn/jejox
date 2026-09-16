@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { requireUser } from '@/lib/auth/session';
+import { DEFAULT_TIMEZONE } from '@/lib/utils/datetime';
 import type { EnabledMetrics } from '@/types/database';
 
 export interface OnboardingPayload {
@@ -28,7 +29,7 @@ export async function completeOnboarding(payload: OnboardingPayload) {
       last_name: payload.lastName.trim(),
       enabled_metrics: payload.enabledMetrics,
       reminders_enabled: payload.remindersEnabled,
-      timezone: payload.timezone || 'UTC',
+      timezone: payload.timezone || DEFAULT_TIMEZONE,
       onboarding_completed: true,
     })
     .eq('id', user.id);

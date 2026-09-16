@@ -16,8 +16,8 @@ export default async function EvolucionPesoPage({
 }) {
   const { dias } = await searchParams;
   const days = Number(dias) || 90;
-  const { from, to } = resolveSimpleRange(days);
   const { supabase, profile } = await requireProfile();
+  const { from, to } = resolveSimpleRange(days, profile.timezone);
 
   const { data } = await supabase
     .from('weight_readings')
