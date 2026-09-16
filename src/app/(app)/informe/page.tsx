@@ -5,25 +5,44 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { PrintButton } from '@/components/ui/PrintButton';
 import { computeAdherence } from '@/features/reports/getMedicationAdherence';
 import { summarizeValues } from '@/features/reports/summarize';
-import { formatDateShort, formatDateLong } from '@/lib/utils/datetime';
+import {
+  formatDateShort,
+  formatDateLong,
+  getZonedDateParts,
+  zonedTimeToUtc,
+} from '@/lib/utils/datetime';
 import { cn } from '@/lib/utils/cn';
 
 export const metadata: Metadata = { title: 'Informe de salud · SaludSimple' };
 
 type PeriodKey = '7d' | '30d' | '3m' | 'personalizado';
 
-function resolvePeriod(period: PeriodKey, from?: string, to?: string) {
-  const now = new Date();
-  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+/** Resuelve el período pedido en la zona horaria del paciente, no la del servidor. */
+function resolvePeriod(period: PeriodKey, timezone: string, from?: string, to?: string) {
+  const today = getZonedDateParts(new Date(), timezone);
 
   if (period === 'personalizado' && from && to) {
-    return { from: new Date(`${from}T00:00:00`), to: new Date(`${to}T23:59:59`) };
+    const [fy, fm, fd] = from.split('-').map(Number);
+    const [ty, tm, td] = to.split('-').map(Number);
+    return {
+      from: zonedTimeToUtc(fy, fm, fd, 0, 0, 0, timezone),
+      to: zonedTimeToUtc(ty, tm, td, 23, 59, 59, timezone),
+    };
   }
 
   const days = period === '7d' ? 6 : period === '30d' ? 29 : 89;
-  const start = new Date(now);
-  start.setDate(start.getDate() - days);
-  start.setHours(0, 0, 0, 0);
+  const end = zonedTimeToUtc(today.year, today.month, today.day, 23, 59, 59, timezone);
+  const startOrdinal = new Date(Date.UTC(today.year, today.month - 1, today.day));
+  startOrdinal.setUTCDate(startOrdinal.getUTCDate() - days);
+  const start = zonedTimeToUtc(
+    startOrdinal.getUTCFullYear(),
+    startOrdinal.getUTCMonth() + 1,
+    startOrdinal.getUTCDate(),
+    0,
+    0,
+    0,
+    timezone
+  );
   return { from: start, to: end };
 }
 
@@ -41,11 +60,10 @@ export default async function InformePage({
 }) {
   const params = await searchParams;
   const period = (params.periodo as PeriodKey) ?? '30d';
-  const { from, to } = resolvePeriod(period, params.desde, params.hasta);
+  const { supabase, profile } = await requireProfile();
+  const { from, to } = resolvePeriod(period, profile.timezone, params.desde, params.hasta);
   const fromIso = from.toISOString();
   const toIso = to.toISOString();
-
-  const { supabase, profile } = await requireProfile();
 
   const [
     { data: medications },
@@ -112,7 +130,14 @@ export default async function InformePage({
       .order('measured_at', { ascending: false }),
   ]);
 
-  const adherence = computeAdherence(medications ?? [], schedules ?? [], logs ?? [], from, to);
+  const adherence = computeAdherence(
+    medications ?? [],
+    schedules ?? [],
+    logs ?? [],
+    from,
+    to,
+    profile.timezone
+  );
   const glucoseSummary = summarizeValues((glucose ?? []).map((r) => r.value));
   const weightSummary = summarizeValues((weight ?? []).map((r) => r.value));
   const temperatureSummary = summarizeValues((temperature ?? []).map((r) => r.value));
@@ -192,9 +217,12 @@ export default async function InformePage({
               <strong>Paciente:</strong> {patientName}
             </p>
             <p>
-              <strong>Período:</strong> {formatDateShort(from)} — {formatDateShort(to)}
+              <strong>Período:</strong> {formatDateShort(from, profile.timezone)} —{' '}
+              {formatDateShort(to, profile.timezone)}
             </p>
-            <p className="text-sm text-ink-muted">Generado el {formatDateLong(new Date())}</p>
+            <p className="text-sm text-ink-muted">
+              Generado el {formatDateLong(new Date(), profile.timezone)}
+            </p>
           </header>
 
           <section>
@@ -253,7 +281,9 @@ export default async function InformePage({
               <ul className="flex flex-col gap-2 list-disc pl-5">
                 {(notes ?? []).map((n, i) => (
                   <li key={i}>
-                    <span className="text-sm text-ink-muted">{formatDateShort(n.measured_at)}: </span>
+                    <span className="text-sm text-ink-muted">
+                      {formatDateShort(n.measured_at, profile.timezone)}:{' '}
+                    </span>
                     {n.note}
                   </li>
                 ))}

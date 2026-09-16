@@ -252,6 +252,36 @@ Handlers.
   `profiles.timezone`, detectada automáticamente en el navegador) contra
   sus horarios de medicamentos activos.
 
+### Que la alerta "insista" hasta que la persona la note
+
+Dos mecanismos trabajan juntos, uno para cuando el teléfono está bloqueado
+o la app está cerrada, y otro para cuando está abierta:
+
+- **Reintento del lado del servidor**: `/api/cron/reminders` no solo
+  dispara una vez a la hora exacta — cada vez que se ejecuta (por
+  ejemplo cada 5 minutos, ver `vercel.json`), revisa si la toma sigue sin
+  resolver (nadie tocó "Ya la tomé" ni "Omitir") y, si es así, vuelve a
+  enviar la notificación con el mismo `tag` y `renotify: true`. Eso hace
+  que Android vuelva a sonar y vibrar en cada reintento, en vez de
+  mostrar una notificación silenciosa una sola vez. Esto se repite
+  durante `ESCALATION_WINDOW_MINUTES` (20 minutos por defecto, en
+  `src/app/api/cron/reminders/route.ts`) o hasta que se resuelva la toma,
+  lo que pase primero.
+- **Sonido dentro de la app**: mientras el diálogo de "Es hora de tomar"
+  está abierto (`DoseActionDialog`), suena en bucle un tono corto
+  (`public/sounds/alert.wav`, generado con `npm run generate-alert-sound`)
+  hasta que se toca cualquiera de los tres botones. Esto funciona
+  independientemente del sistema operativo o de las políticas de sonido
+  de las notificaciones push, porque el audio lo controla directamente la
+  aplicación.
+
+Ningún navegador permite que una web controle el sonido nativo de una
+notificación del sistema (no existe una API para eso); lo que se puede
+controlar es la frecuencia de los reintentos (`renotify`) y el sonido
+propio de la app una vez abierta. Por eso, para que el reintento del
+servidor funcione, hace falta que `/api/cron/reminders` se ejecute
+seguido — ver la limitación del plan gratuito de Vercel más abajo.
+
 ### Cómo configurar el cron en Vercel
 
 `vercel.json` ya incluye:
@@ -351,9 +381,27 @@ Documentadas explícitamente en vez de prometidas y no cumplidas:
 - **Notificaciones en iOS**: solo funcionan si la app fue agregada a la
   pantalla de inicio (no alcanza con tenerla abierta en Safari), y el
   sistema operativo decide cuándo entregarlas exactamente; no hay alarma
-  garantizada al segundo, en ningún sistema operativo.
+  garantizada al segundo, en ningún sistema operativo. iOS tampoco
+  soporta los botones de acción de la notificación (Android sí).
+- **"Sonar hasta que se note" depende de la frecuencia del cron**: el
+  reintento del servidor (ver PWA más arriba) solo insiste tan seguido
+  como se ejecute `/api/cron/reminders`. Si el cron corre una vez por día
+  (plan gratuito de Vercel sin cron externo), no hay reintentos
+  intermedios: solo el sonido dentro de la app, si la persona la abre.
 - **Cron en el plan gratuito de Vercel**: limitado a una vez por día (ver
   sección de PWA más arriba para alternativas).
+- **Formato de fechas/horas fuera del dashboard, el detalle de un
+  medicamento y el informe**: esas tres pantallas ya calculan y muestran
+  todo en la zona horaria real del paciente (`profiles.timezone`). El
+  resto de las pantallas (por ejemplo las etiquetas de fecha en
+  Historial) todavía usan el huso horario del servidor para el
+  *formato* de fecha/hora que se muestra en pantalla — la hora guardada
+  en la base es siempre correcta (UTC real), es solo una cuestión de
+  cómo se la formatea para mostrarla. El efecto práctico es un
+  corrimiento de unas pocas horas en esas etiquetas para usuarios muy
+  lejos de UTC, no un dato mal guardado. Si te interesa, es una extensión
+  directa: pasarle `profile.timezone` a `formatTime`/`formatDate*` (ya
+  aceptan un segundo parámetro opcional para esto) en esas pantallas.
 - **Cuidadores con permiso de edición**: pueden ver los datos completos
   del paciente y el sistema de permisos ya está modelado en la base de
   datos, pero la carga de mediciones "en nombre de" otra persona todavía

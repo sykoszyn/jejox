@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { computeAdherence } from './getMedicationAdherence';
 import type { Medication, MedicationLog, MedicationSchedule } from '@/types/database';
 
+const TZ = 'UTC';
+
 const medication: Medication = {
   id: 'med-1',
   user_id: 'user-1',
@@ -30,7 +32,7 @@ const schedule: MedicationSchedule = {
 };
 
 function logFor(date: string, status: MedicationLog['status']): MedicationLog {
-  const scheduledFor = new Date(`${date}T13:00:00`);
+  const scheduledFor = new Date(`${date}T13:00:00.000Z`);
   return {
     id: `log-${date}`,
     medication_id: medication.id,
@@ -48,12 +50,12 @@ function logFor(date: string, status: MedicationLog['status']): MedicationLog {
 
 describe('computeAdherence', () => {
   it('cuenta tomas programadas, tomadas, omitidas y pendientes en un rango de 3 días', () => {
-    const from = new Date('2024-06-10T00:00:00');
-    const to = new Date('2024-06-12T00:00:00');
+    const from = new Date('2024-06-10T00:00:00Z');
+    const to = new Date('2024-06-12T00:00:00Z');
 
     const logs = [logFor('2024-06-10', 'taken'), logFor('2024-06-11', 'skipped')];
 
-    const [adherence] = computeAdherence([medication], [schedule], logs, from, to);
+    const [adherence] = computeAdherence([medication], [schedule], logs, from, to, TZ);
 
     expect(adherence.name).toBe('Aspirina');
     expect(adherence.scheduled).toBe(3);
@@ -63,8 +65,8 @@ describe('computeAdherence', () => {
   });
 
   it('devuelve una lista vacía si no hay medicamentos', () => {
-    const from = new Date('2024-06-10T00:00:00');
-    const to = new Date('2024-06-12T00:00:00');
-    expect(computeAdherence([], [], [], from, to)).toEqual([]);
+    const from = new Date('2024-06-10T00:00:00Z');
+    const to = new Date('2024-06-12T00:00:00Z');
+    expect(computeAdherence([], [], [], from, to, TZ)).toEqual([]);
   });
 });

@@ -9,7 +9,7 @@ vi.mock('@/lib/medications/actions', () => ({
   snoozeMedication: vi.fn().mockResolvedValue({ success: true }),
 }));
 
-// HTMLDialogElement no está implementado en jsdom.
+// HTMLDialogElement y la reproducción de audio no están implementados en jsdom.
 beforeEach(() => {
   HTMLDialogElement.prototype.showModal = vi.fn(function (this: HTMLDialogElement) {
     this.open = true;
@@ -17,6 +17,8 @@ beforeEach(() => {
   HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
     this.open = false;
   });
+  HTMLMediaElement.prototype.play = vi.fn().mockResolvedValue(undefined);
+  HTMLMediaElement.prototype.pause = vi.fn();
 });
 
 const dose: DoseInfo = {
@@ -30,6 +32,13 @@ const dose: DoseInfo = {
 };
 
 describe('DoseActionDialog', () => {
+  it('reproduce el sonido de alerta en bucle mientras el diálogo está abierto', () => {
+    const onClose = vi.fn();
+    render(<DoseActionDialog dose={dose} open onClose={onClose} />);
+
+    expect(HTMLMediaElement.prototype.play).toHaveBeenCalled();
+  });
+
   it('llama a markMedicationTaken y cierra el dialogo al confirmar "Ya la tomé"', async () => {
     const onClose = vi.fn();
     render(<DoseActionDialog dose={dose} open onClose={onClose} />);

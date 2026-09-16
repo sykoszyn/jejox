@@ -57,8 +57,8 @@ export default async function MedicamentoDetailPage({
           </p>
           {medication.instructions && <p className="text-ink-muted">{medication.instructions}</p>}
           <p className="text-sm text-ink-muted">
-            Desde {formatDateShort(medication.start_date)}
-            {medication.end_date && ` hasta ${formatDateShort(medication.end_date)}`}
+            Desde {formatDateShort(medication.start_date, 'UTC')}
+            {medication.end_date && ` hasta ${formatDateShort(medication.end_date, 'UTC')}`}
           </p>
           {!medication.is_active && (
             <p className="inline-flex w-fit items-center gap-1 text-sm font-bold bg-surface-muted px-3 py-1 rounded-full">
@@ -99,10 +99,12 @@ export default async function MedicamentoDetailPage({
                   {log.status === 'pending' || log.status === 'snoozed' ? (
                     <Clock className="text-warning" size={20} />
                   ) : null}
-                  {formatDateShort(log.scheduled_for)} · {formatTime(log.scheduled_for)}
+                  {formatDateShort(log.scheduled_for, profile.timezone)} ·{' '}
+                  {formatTime(log.scheduled_for, profile.timezone)}
                 </span>
                 <span className="text-ink-muted capitalize">
-                  {log.status === 'taken' && `Tomado ${log.taken_at ? 'a las ' + formatTime(log.taken_at) : ''}`}
+                  {log.status === 'taken' &&
+                    `Tomado ${log.taken_at ? 'a las ' + formatTime(log.taken_at, profile.timezone) : ''}`}
                   {log.status === 'skipped' && 'Omitido'}
                   {log.status === 'snoozed' && 'Pospuesto'}
                   {log.status === 'pending' && 'Pendiente'}

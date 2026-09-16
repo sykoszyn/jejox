@@ -10,7 +10,8 @@
     "generate-vapid-keys": "node scripts/generate-vapid-keys.mjs",
     "generate-icons": "node scripts/generate-icons.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "generate-alert-sound": "node scripts/generate-alert-sound.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

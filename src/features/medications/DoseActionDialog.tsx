@@ -25,6 +25,7 @@ export function DoseActionDialog({
   onClose: () => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [showSnooze, setShowSnooze] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -34,6 +35,25 @@ export function DoseActionDialog({
     if (!dialog) return;
     if (open && !dialog.open) dialog.showModal();
     if (!open && dialog.open) dialog.close();
+  }, [open]);
+
+  // Suena en bucle mientras el recordatorio esté sin resolver, para que se
+  // note aunque el teléfono esté en la otra habitación. Se corta apenas se
+  // toca cualquiera de los tres botones (o se cierra el diálogo), porque
+  // en ese momento este componente se desmonta (ver key en el padre).
+  useEffect(() => {
+    if (!open) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {
+      // Política de autoplay del navegador: si lo bloquea, el recordatorio
+      // sigue siendo visible igual, solo que sin sonido.
+    });
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
   }, [open]);
 
   if (!dose) return null;
@@ -78,10 +98,14 @@ export function DoseActionDialog({
       aria-labelledby="dose-dialog-title"
       className="rounded-3xl border border-border p-0 bg-surface text-ink max-w-sm w-[92vw] backdrop:bg-black/60"
     >
+      <audio ref={audioRef} src="/sounds/alert.wav" loop preload="auto" aria-hidden="true" />
       <div className="p-6 flex flex-col items-center gap-4 text-center">
         <Pill className="text-primary" size={48} aria-hidden="true" />
         <p className="text-lg font-bold uppercase tracking-wide text-ink-muted">
           Es hora de tomar
+        </p>
+        <p className="sr-only" role="status">
+          Sonando hasta que confirmes qué hiciste con este medicamento.
         </p>
         <h2 id="dose-dialog-title" className="text-2xl font-extrabold">
           {dose.name}

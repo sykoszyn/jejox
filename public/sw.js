@@ -91,6 +91,15 @@ self.addEventListener('push', (event) => {
       { action: 'skip', title: 'Omitir' },
     ],
     requireInteraction: true,
+    // renotify: aunque ya haya una notificacion visible con el mismo
+    // `tag` (porque el servidor la reenvio para "insistir"), el
+    // dispositivo vuelve a sonar y vibrar en vez de actualizarla en
+    // silencio. Es lo que en Android logra el efecto de "seguir sonando"
+    // mientras el servidor siga reintentando (ver /api/cron/reminders).
+    renotify: true,
+    // Patron de vibracion largo e intermitente (en ms: vibra, pausa, ...)
+    // para que se note incluso si el volumen de notificaciones esta bajo.
+    vibrate: [400, 200, 400, 200, 400, 400, 800],
   };
 
   event.waitUntil(self.registration.showNotification(title, options));

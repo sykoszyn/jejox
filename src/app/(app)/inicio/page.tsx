@@ -7,14 +7,22 @@ import { TodayMedicationsSection, type DoseViewModel } from '@/features/medicati
 import { HealthMetricCard } from '@/components/ui/HealthMetricCard';
 import { QuickActionButton } from '@/components/ui/QuickActionButton';
 import { EmergencyCallButton } from '@/components/ui/EmergencyCallButton';
-import { greetingForHour, formatTime, formatDateLong } from '@/lib/utils/datetime';
+import {
+  greetingForHour,
+  formatTime,
+  formatDateLong,
+  getZonedDateParts,
+  zonedTimeToUtc,
+} from '@/lib/utils/datetime';
 
 export const metadata: Metadata = { title: 'Inicio · SaludSimple' };
 
 export default async function InicioPage() {
   const { supabase, profile } = await requireProfile();
   const now = new Date();
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+  const tz = profile.timezone;
+  const today = getZonedDateParts(now, tz);
+  const startOfDay = zonedTimeToUtc(today.year, today.month, today.day, 0, 0, 0, tz).toISOString();
 
   const [{ data: medications }, { data: schedules }, { data: logs }, { data: emergencyContact }] =
     await Promise.all([
@@ -34,7 +42,7 @@ export default async function InicioPage() {
         .maybeSingle(),
     ]);
 
-  const doses = getDosesForDay(medications ?? [], schedules ?? [], logs ?? [], now);
+  const doses = getDosesForDay(medications ?? [], schedules ?? [], logs ?? [], now, tz);
 
   const doseViewModels: DoseViewModel[] = doses.map((dose) => ({
     medicationId: dose.medication.id,
@@ -43,9 +51,9 @@ export default async function InicioPage() {
     name: dose.medication.name,
     dose: dose.medication.dose,
     doseUnit: dose.medication.dose_unit,
-    timeLabel: formatTime(dose.effectiveTime),
+    timeLabel: formatTime(dose.effectiveTime, tz),
     status: dose.log?.status ?? 'pending',
-    takenAtLabel: dose.log?.taken_at ? formatTime(dose.log.taken_at) : null,
+    takenAtLabel: dose.log?.taken_at ? formatTime(dose.log.taken_at, tz) : null,
   }));
 
   const readings = await getLatestReadings(supabase, profile.id, profile.enabled_metrics);
@@ -53,9 +61,9 @@ export default async function InicioPage() {
   return (
     <div className="px-4 pt-6 pb-8 max-w-2xl mx-auto flex flex-col gap-8">
       <header>
-        <p className="text-ink-muted capitalize">{formatDateLong(now)}</p>
+        <p className="text-ink-muted capitalize">{formatDateLong(now, tz)}</p>
         <h1 className="text-3xl font-extrabold">
-          {greetingForHour(now)}, {profile.first_name || 'bienvenido'}
+          {greetingForHour(now, tz)}, {profile.first_name || 'bienvenido'}
         </h1>
       </header>
 
@@ -72,7 +80,7 @@ export default async function InicioPage() {
               label="Glucosa"
               value={readings.glucose ? String(readings.glucose.value) : null}
               unit={readings.glucose?.unit}
-              timeLabel={readings.glucose ? formatTime(readings.glucose.measured_at) : null}
+              timeLabel={readings.glucose ? formatTime(readings.glucose.measured_at, tz) : null}
               href="/mediciones/glucosa/nueva"
             />
           )}
@@ -87,7 +95,7 @@ export default async function InicioPage() {
               }
               unit="mmHg"
               timeLabel={
-                readings.blood_pressure ? formatTime(readings.blood_pressure.measured_at) : null
+                readings.blood_pressure ? formatTime(readings.blood_pressure.measured_at, tz) : null
               }
               href="/mediciones/presion/nueva"
             />
@@ -98,7 +106,7 @@ export default async function InicioPage() {
               label="Pulso"
               value={readings.heart_rate ? String(readings.heart_rate.value) : null}
               unit="BPM"
-              timeLabel={readings.heart_rate ? formatTime(readings.heart_rate.measured_at) : null}
+              timeLabel={readings.heart_rate ? formatTime(readings.heart_rate.measured_at, tz) : null}
               href="/mediciones/pulso/nueva"
             />
           )}
@@ -108,7 +116,7 @@ export default async function InicioPage() {
               label="Peso"
               value={readings.weight ? String(readings.weight.value) : null}
               unit={readings.weight?.unit}
-              timeLabel={readings.weight ? formatTime(readings.weight.measured_at) : null}
+              timeLabel={readings.weight ? formatTime(readings.weight.measured_at, tz) : null}
               href="/mediciones/peso/nueva"
             />
           )}
@@ -118,7 +126,7 @@ export default async function InicioPage() {
               label="Temperatura"
               value={readings.temperature ? String(readings.temperature.value) : null}
               unit={readings.temperature?.unit}
-              timeLabel={readings.temperature ? formatTime(readings.temperature.measured_at) : null}
+              timeLabel={readings.temperature ? formatTime(readings.temperature.measured_at, tz) : null}
               href="/mediciones/temperatura/nueva"
             />
           )}
@@ -128,7 +136,7 @@ export default async function InicioPage() {
               label="Saturación"
               value={readings.oxygen ? String(readings.oxygen.value) : null}
               unit="%"
-              timeLabel={readings.oxygen ? formatTime(readings.oxygen.measured_at) : null}
+              timeLabel={readings.oxygen ? formatTime(readings.oxygen.measured_at, tz) : null}
               href="/mediciones/oxigeno/nueva"
             />
           )}

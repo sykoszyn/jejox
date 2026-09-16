@@ -1,5 +1,6 @@
 import type { Medication, MedicationLog, MedicationSchedule } from '@/types/database';
-import { getDosesForDay } from '@/lib/medications/schedule';
+import { getDosesForDate, type LocalDate } from '@/lib/medications/schedule';
+import { getZonedDateParts } from '@/lib/utils/datetime';
 
 export interface MedicationAdherence {
   medicationId: string;
@@ -12,20 +13,37 @@ export interface MedicationAdherence {
   pending: number;
 }
 
+function toOrdinal({ year, month, day }: LocalDate) {
+  return Date.UTC(year, month - 1, day);
+}
+
+function nextDay({ year, month, day }: LocalDate): LocalDate {
+  const d = new Date(Date.UTC(year, month - 1, day));
+  d.setUTCDate(d.getUTCDate() + 1);
+  return { year: d.getUTCFullYear(), month: d.getUTCMonth() + 1, day: d.getUTCDate() };
+}
+
+/**
+ * Recorre día de calendario por día de calendario, en la zona horaria del
+ * paciente (`timezone`), no la del servidor — de lo contrario, cerca de la
+ * medianoche se contarían tomas del día equivocado.
+ */
 export function computeAdherence(
   medications: Medication[],
   schedules: MedicationSchedule[],
   logs: MedicationLog[],
   from: Date,
-  to: Date
+  to: Date,
+  timezone: string
 ): MedicationAdherence[] {
   const byMedication = new Map<string, MedicationAdherence>();
 
-  const cursor = new Date(from.getFullYear(), from.getMonth(), from.getDate());
-  const end = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+  const fromParts = getZonedDateParts(from, timezone);
+  let cursor: LocalDate = { year: fromParts.year, month: fromParts.month, day: fromParts.day };
+  const endOrdinal = toOrdinal(getZonedDateParts(to, timezone));
 
-  while (cursor <= end) {
-    const doses = getDosesForDay(medications, schedules, logs, cursor);
+  while (toOrdinal(cursor) <= endOrdinal) {
+    const doses = getDosesForDate(medications, schedules, logs, cursor, timezone);
     for (const dose of doses) {
       const key = dose.medication.id;
       const entry = byMedication.get(key) ?? {
@@ -44,7 +62,7 @@ export function computeAdherence(
       else entry.pending += 1;
       byMedication.set(key, entry);
     }
-    cursor.setDate(cursor.getDate() + 1);
+    cursor = nextDay(cursor);
   }
 
   return Array.from(byMedication.values()).sort((a, b) => a.name.localeCompare(b.name));
