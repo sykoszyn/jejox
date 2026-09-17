@@ -48,7 +48,7 @@ export default async function EditarMedicamentoPage({
         <MedicationForm
           initialValues={initialValues}
           submitLabel="Guardar cambios"
-          onSubmit={(values) => updateMedication(id, values)}
+          onSubmit={updateMedication.bind(null, id)}
         />
         <div className="mt-8 pt-6 border-t-2 border-border">
           <DeleteMedicationButton medicationId={id} medicationName={medication.name} />
