@@ -160,6 +160,8 @@ export async function GET(request: Request) {
           const statusCode = (err as { statusCode?: number })?.statusCode;
           if (statusCode === 404 || statusCode === 410) {
             await supabase.from('push_subscriptions').delete().eq('id', sub.id);
+          } else {
+            console.error('cron/reminders: sendNotification failed', { statusCode, err });
           }
         }
       }
