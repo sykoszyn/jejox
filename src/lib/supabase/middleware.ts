@@ -10,7 +10,13 @@ function isPublicPath(pathname: string) {
     pathname.startsWith('/_next') ||
     pathname.startsWith('/manifest') ||
     pathname.startsWith('/sw.js') ||
-    pathname.startsWith('/icons')
+    pathname.startsWith('/icons') ||
+    // Las rutas de API hacen su propia verificacion (requireUser(), o el
+    // secreto CRON_SECRET en /api/cron/reminders): no tiene sentido
+    // redirigirlas a /ingresar con un 307 como si fueran una pagina, y
+    // eso es justamente lo que rompia el cron externo (cron-job.org
+    // recibia el redirect en vez de llegar al handler real).
+    pathname.startsWith('/api/')
   );
 }
 
