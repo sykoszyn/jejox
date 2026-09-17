@@ -9,6 +9,9 @@ export interface DoseInfo {
   medicationId: string;
   scheduleId: string | null;
   scheduledFor: string; // ISO
+  /** Hora real a partir de la cual esta toma debe considerarse vencida
+   * (si está pospuesta, es la nueva hora; si no, igual a scheduledFor). */
+  effectiveFor: string; // ISO
   name: string;
   dose: number;
   doseUnit: string;

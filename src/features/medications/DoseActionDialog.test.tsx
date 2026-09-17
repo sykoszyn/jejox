@@ -25,6 +25,7 @@ const dose: DoseInfo = {
   medicationId: 'med-1',
   scheduleId: 'sched-1',
   scheduledFor: '2024-06-10T08:00:00.000Z',
+  effectiveFor: '2024-06-10T08:00:00.000Z',
   name: 'Metformina',
   dose: 850,
   doseUnit: 'mg',

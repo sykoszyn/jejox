@@ -48,6 +48,7 @@ export default async function InicioPage() {
     medicationId: dose.medication.id,
     scheduleId: dose.schedule.id,
     scheduledFor: dose.scheduledFor.toISOString(),
+    effectiveFor: dose.effectiveTime.toISOString(),
     name: dose.medication.name,
     dose: dose.medication.dose,
     doseUnit: dose.medication.dose_unit,

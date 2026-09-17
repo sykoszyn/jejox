@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pill, Check } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { LargeButton } from '@/components/ui/LargeButton';
@@ -11,6 +11,8 @@ export interface DoseViewModel extends DoseInfo {
   takenAtLabel: string | null;
 }
 
+const CHECK_INTERVAL_MS = 15_000;
+
 export function TodayMedicationsSection({ doses }: { doses: DoseViewModel[] }) {
   const [activeDose, setActiveDose] = useState<DoseInfo | null>(null);
 
@@ -18,6 +20,25 @@ export function TodayMedicationsSection({ doses }: { doses: DoseViewModel[] }) {
   const next = pending[0] ?? null;
   const rest = pending.slice(1);
   const resolvedToday = doses.filter((d) => d.status === 'taken' || d.status === 'skipped');
+
+  // La alarma no debería depender de que alguien se acuerde de tocar
+  // "Tomar": mientras la app esté abierta, en cuanto se cumple el horario
+  // (o se vence una posposición) esto abre solo el diálogo con sonido. Si
+  // se cierra sin elegir una acción (por ej. con Escape), sigue pendiente
+  // y vuelve a sonar en el próximo chequeo — a propósito, para que insista.
+  useEffect(() => {
+    const check = () => {
+      setActiveDose((current) => {
+        if (current) return current;
+        const due = pending.find((d) => new Date(d.effectiveFor).getTime() <= Date.now());
+        return due ?? current;
+      });
+    };
+    check();
+    const id = setInterval(check, CHECK_INTERVAL_MS);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pending.map((d) => `${d.scheduleId}-${d.effectiveFor}`).join(',')]);
 
   if (doses.length === 0) {
     return null;
