@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from 'react';
 import { Check, Clock, X, Pill } from 'lucide-react';
 import { LargeButton } from '@/components/ui/LargeButton';
 import { markMedicationTaken, markMedicationSkipped, snoozeMedication } from '@/lib/medications/actions';
+import { playAlarmAudio, stopAlarmAudio } from './alarmAudio';
 
 export interface DoseInfo {
   medicationId: string;
@@ -28,7 +29,6 @@ export function DoseActionDialog({
   onClose: () => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [showSnooze, setShowSnooze] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -43,20 +43,15 @@ export function DoseActionDialog({
   // Suena en bucle mientras el recordatorio esté sin resolver, para que se
   // note aunque el teléfono esté en la otra habitación. Se corta apenas se
   // toca cualquiera de los tres botones (o se cierra el diálogo), porque
-  // en ese momento este componente se desmonta (ver key en el padre).
+  // en ese momento este componente se desmonta (ver key en el padre). Usa
+  // un único <audio> compartido (alarmAudio.ts) en vez de crear uno nuevo
+  // acá: así, cuando este diálogo se abre solo (sin un toque nuevo del
+  // usuario justo antes), puede seguir sonando si ese audio ya fue
+  // "desbloqueado" antes por algún toque anterior en la app.
   useEffect(() => {
     if (!open) return;
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.currentTime = 0;
-    audio.play().catch(() => {
-      // Política de autoplay del navegador: si lo bloquea, el recordatorio
-      // sigue siendo visible igual, solo que sin sonido.
-    });
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-    };
+    playAlarmAudio();
+    return () => stopAlarmAudio();
   }, [open]);
 
   if (!dose) return null;
@@ -99,9 +94,8 @@ export function DoseActionDialog({
         onClose();
       }}
       aria-labelledby="dose-dialog-title"
-      className="rounded-3xl border border-border p-0 bg-surface text-ink max-w-sm w-[92vw] backdrop:bg-black/60"
+      className="rounded-3xl border-2 border-border p-0 bg-surface text-ink max-w-sm w-[92vw] backdrop:bg-black/60"
     >
-      <audio ref={audioRef} src="/sounds/alert.wav" loop preload="auto" aria-hidden="true" />
       <div className="p-6 flex flex-col items-center gap-4 text-center">
         <Pill className="text-primary" size={48} aria-hidden="true" />
         <p className="text-lg font-bold uppercase tracking-wide text-ink-muted">

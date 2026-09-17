@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { BottomNavigation } from '@/components/layout/BottomNavigation';
 import { ClientSync } from '@/features/settings/ClientSync';
+import { AlarmAudioUnlocker } from '@/features/medications/AlarmAudioUnlocker';
 import { getCachedProfile, getCachedUser } from '@/lib/auth/session';
 import { DEFAULT_TIMEZONE } from '@/lib/utils/datetime';
 import type { UiPrefsPayload } from '@/lib/preferencesShared';
@@ -25,6 +26,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   return (
     <>
       {user && <ClientSync currentTimezone={timezone} prefs={prefs} />}
+      {user && <AlarmAudioUnlocker />}
       <main id="contenido-principal" className="flex-1 pb-24">
         {children}
       </main>
