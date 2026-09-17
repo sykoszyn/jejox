@@ -57,7 +57,7 @@ function crossMask(x, y, size) {
 }
 
 function generatePng(size, { maskable = false } = {}) {
-  const bg = [193, 83, 29]; // #c1531d
+  const bg = [198, 40, 40]; // #c62828
   const fg = [255, 255, 255];
   const radius = maskable ? 0 : Math.round(size * 0.2);
   // maskable icons need full-bleed background with safe-zone content

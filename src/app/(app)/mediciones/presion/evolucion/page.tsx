@@ -48,8 +48,8 @@ export default async function EvolucionPresionPage({
           <EvolutionChart
             data={points}
             series={[
-              { key: 'sistolica', label: 'Sistólica', color: '#0f6e58' },
-              { key: 'diastolica', label: 'Diastólica', color: '#c1531d' },
+              { key: 'sistolica', label: 'Sistólica', color: '#c62828' },
+              { key: 'diastolica', label: 'Diastólica', color: '#2b2b2b' },
             ]}
             unit="mmHg"
           />

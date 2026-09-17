@@ -43,7 +43,7 @@ export default async function EvolucionPulsoPage({
         ) : (
           <EvolutionChart
             data={points}
-            series={[{ key: 'pulso', label: 'Pulso', color: '#0f6e58' }]}
+            series={[{ key: 'pulso', label: 'Pulso', color: '#c62828' }]}
             unit="BPM"
           />
         )}

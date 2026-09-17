@@ -43,7 +43,7 @@ export default async function EvolucionGlucosaPage({
         ) : (
           <EvolutionChart
             data={points}
-            series={[{ key: 'glucosa', label: 'Glucosa', color: '#0f6e58' }]}
+            series={[{ key: 'glucosa', label: 'Glucosa', color: '#c62828' }]}
             unit={profile.glucose_unit}
           />
         )}

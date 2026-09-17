@@ -43,7 +43,7 @@ export default async function EvolucionOxigenoPage({
         ) : (
           <EvolutionChart
             data={points}
-            series={[{ key: 'saturacion', label: 'Saturación', color: '#0f6e58' }]}
+            series={[{ key: 'saturacion', label: 'Saturación', color: '#c62828' }]}
             unit="%"
           />
         )}

@@ -84,7 +84,8 @@ export default function LandingPage() {
             {FEATURES.map(({ icon: Icon, title, description }) => (
               <div
                 key={title}
-                className="flex items-center gap-5 p-5 rounded-2xl border-2 border-border bg-surface border-l-[6px] border-l-accent"
+                className="flex items-center gap-5 p-5 rounded-2xl border-2 border-border bg-surface"
+                style={{ borderLeftWidth: '6px', borderLeftColor: 'var(--color-accent)' }}
               >
                 <Icon className="text-accent shrink-0" size={30} aria-hidden="true" />
                 <div>

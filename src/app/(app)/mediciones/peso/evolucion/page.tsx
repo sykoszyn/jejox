@@ -43,7 +43,7 @@ export default async function EvolucionPesoPage({
         ) : (
           <EvolutionChart
             data={points}
-            series={[{ key: 'peso', label: 'Peso', color: '#0f6e58' }]}
+            series={[{ key: 'peso', label: 'Peso', color: '#c62828' }]}
             unit={data?.[0]?.unit ?? 'kg'}
           />
         )}

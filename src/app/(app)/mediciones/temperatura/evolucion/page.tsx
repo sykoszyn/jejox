@@ -43,7 +43,7 @@ export default async function EvolucionTemperaturaPage({
         ) : (
           <EvolutionChart
             data={points}
-            series={[{ key: 'temperatura', label: 'Temperatura', color: '#0f6e58' }]}
+            series={[{ key: 'temperatura', label: 'Temperatura', color: '#c62828' }]}
             unit={data?.[0]?.unit ?? '°C'}
           />
         )}

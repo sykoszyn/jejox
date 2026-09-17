@@ -2,38 +2,39 @@
 
 /* =====================================================
    Mejoralito - Design tokens
-   Paleta propia: terracota cálida como color de marca (cercano,
-   humano — nada de celeste/violeta genérico de "app con IA"),
-   verde como segundo color, papel cálido en vez de blanco frío.
+   Paleta roja y blanca: fondo blanco (máxima legibilidad, sin fondos
+   tostados que le resten contraste al texto), rojo como color de
+   marca (botones, enlaces, navegación), gris casi negro como segundo
+   color para no repetir el mismo rojo en todos lados.
    Modo claro es el predeterminado (publico objetivo: adultos
    mayores). Alto contraste y tamano de texto son ajustables.
    ===================================================== */
 :root {
-  --color-bg: #f7ecd9;
-  --color-surface: #fffaf0;
-  --color-surface-muted: #efe0c3;
-  --color-border: #e0c799;
-  --color-ink: #2b2420;
-  --color-ink-muted: #6b5d4f;
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f2f2f2;
+  --color-border: #d9d9d9;
+  --color-ink: #1a1a1a;
+  --color-ink-muted: #595959;
 
-  --color-primary: #c1531d;
-  --color-primary-dark: #973f14;
+  --color-primary: #c62828;
+  --color-primary-dark: #8e1c1c;
   --color-primary-contrast: #ffffff;
-  --color-primary-soft: #fbe9dd;
+  --color-primary-soft: #fbe4e4;
 
-  --color-accent: #0f6e58;
-  --color-accent-dark: #0a4f3f;
+  --color-accent: #2b2b2b;
+  --color-accent-dark: #000000;
   --color-accent-contrast: #ffffff;
-  --color-accent-soft: #e3f1ec;
+  --color-accent-soft: #ececec;
 
   --color-success: #1b7a3d;
   --color-success-soft: #e4f4e8;
   --color-warning: #916500;
   --color-warning-soft: #fdf0cf;
-  --color-danger: #c62828;
-  --color-danger-soft: #fbe4e4;
+  --color-danger: #8e1c1c;
+  --color-danger-soft: #f2dede;
 
-  --color-focus-ring: #973f14;
+  --color-focus-ring: #8e1c1c;
 
   --radius-card: 1rem;
   --radius-button: 0.85rem;
@@ -42,31 +43,31 @@
 }
 
 :root[data-theme='oscuro'] {
-  --color-bg: #1d1712;
-  --color-surface: #251c14;
-  --color-surface-muted: #2f2418;
-  --color-border: #4a3a28;
-  --color-ink: #f5ede0;
-  --color-ink-muted: #cdbfa8;
+  --color-bg: #121212;
+  --color-surface: #1c1c1c;
+  --color-surface-muted: #262626;
+  --color-border: #3d3d3d;
+  --color-ink: #f5f5f5;
+  --color-ink-muted: #b8b8b8;
 
-  --color-primary: #ff9152;
-  --color-primary-dark: #e8783a;
-  --color-primary-contrast: #2a1200;
-  --color-primary-soft: #3a2415;
+  --color-primary: #ff5252;
+  --color-primary-dark: #e53935;
+  --color-primary-contrast: #2a0000;
+  --color-primary-soft: #3a1414;
 
-  --color-accent: #4fd3a8;
-  --color-accent-dark: #2fae86;
-  --color-accent-contrast: #08201a;
-  --color-accent-soft: #1d332a;
+  --color-accent: #e0e0e0;
+  --color-accent-dark: #ffffff;
+  --color-accent-contrast: #121212;
+  --color-accent-soft: #2e2e2e;
 
   --color-success: #5fd57f;
   --color-success-soft: #1c3324;
   --color-warning: #ffcf5c;
   --color-warning-soft: #3a2e0c;
-  --color-danger: #ff6b6b;
+  --color-danger: #c25450;
   --color-danger-soft: #3a1614;
 
-  --color-focus-ring: #ff9152;
+  --color-focus-ring: #ff5252;
 }
 
 :root[data-contrast='alto'] {
@@ -75,10 +76,10 @@
   --color-border: #000000;
   --color-ink: #000000;
   --color-ink-muted: #202020;
-  --color-primary: #7a2e00;
-  --color-primary-soft: #f6dcc9;
-  --color-accent: #004d3d;
-  --color-accent-soft: #d7ede6;
+  --color-primary: #7a0000;
+  --color-primary-soft: #f6d9d9;
+  --color-accent: #000000;
+  --color-accent-soft: #e0e0e0;
   --color-focus-ring: #000000;
 }
 
@@ -88,10 +89,10 @@
   --color-border: #ffffff;
   --color-ink: #ffffff;
   --color-ink-muted: #eaeaea;
-  --color-primary: #ffb37a;
-  --color-primary-soft: #4a2a10;
-  --color-accent: #6fffce;
-  --color-accent-soft: #073c2f;
+  --color-primary: #ff8a80;
+  --color-primary-soft: #4a1212;
+  --color-accent: #ffffff;
+  --color-accent-soft: #2e2e2e;
   --color-focus-ring: #ffffff;
 }
 
