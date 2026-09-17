@@ -1,23 +1,23 @@
 import type { Metadata } from 'next';
 import { LegalShell } from '@/components/layout/LegalShell';
 
-export const metadata: Metadata = { title: 'Términos y condiciones · SaludSimple' };
+export const metadata: Metadata = { title: 'Términos y condiciones · Mejoralito' };
 
 export default function TerminosPage() {
   return (
     <LegalShell title="Términos y condiciones">
       <p className="text-ink-muted">Última actualización: {new Date().toLocaleDateString('es-AR')}</p>
 
-      <h2 className="text-xl font-bold mt-2">1. Qué es SaludSimple</h2>
+      <h2 className="text-xl font-bold mt-2">1. Qué es Mejoralito</h2>
       <p>
-        SaludSimple es una aplicación de registro y organización personal de información de salud:
+        Mejoralito es una aplicación de registro y organización personal de información de salud:
         medicamentos, horarios, recordatorios, mediciones e historial. Al crear una cuenta, aceptás
         estos términos.
       </p>
 
       <h2 className="text-xl font-bold mt-2">2. Esto NO es un servicio médico</h2>
       <p>
-        SaludSimple no diagnostica enfermedades, no interpreta resultados clínicos ni recomienda
+        Mejoralito no diagnostica enfermedades, no interpreta resultados clínicos ni recomienda
         tratamientos. Es una herramienta de organización y recordatorio. Ante cualquier duda o
         síntoma, consultá siempre con un profesional de la salud. En una emergencia, comunicate con
         los servicios de emergencia de tu país.
@@ -35,7 +35,7 @@ export default function TerminosPage() {
         Los recordatorios se envían mediante notificaciones push del navegador. No podemos
         garantizar la entrega exacta en el segundo programado: el sistema operativo del teléfono
         (especialmente iOS) puede retrasar o agrupar notificaciones para ahorrar batería. No uses
-        SaludSimple como única fuente de alarmas para medicación crítica sin un respaldo adicional.
+        Mejoralito como única fuente de alarmas para medicación crítica sin un respaldo adicional.
       </p>
 
       <h2 className="text-xl font-bold mt-2">5. Exactitud de la información</h2>

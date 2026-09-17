@@ -3,9 +3,10 @@ import { notFound } from 'next/navigation';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { requireProfile } from '@/lib/auth/session';
 import { MedicationForm, type MedicationFormDraft } from '@/features/medications/MedicationForm';
+import { DeleteMedicationButton } from '@/features/medications/DeleteMedicationButton';
 import { updateMedication } from '@/features/medications/actions';
 
-export const metadata: Metadata = { title: 'Editar medicamento · SaludSimple' };
+export const metadata: Metadata = { title: 'Editar medicamento · Mejoralito' };
 
 export default async function EditarMedicamentoPage({
   params,
@@ -49,6 +50,9 @@ export default async function EditarMedicamentoPage({
           submitLabel="Guardar cambios"
           onSubmit={(values) => updateMedication(id, values)}
         />
+        <div className="mt-8 pt-6 border-t-2 border-border">
+          <DeleteMedicationButton medicationId={id} medicationName={medication.name} />
+        </div>
       </div>
     </div>
   );

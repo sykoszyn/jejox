@@ -8,7 +8,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { getLatestReadings } from '@/features/measurements/getLatestReadings';
 import { formatTime } from '@/lib/utils/datetime';
 
-export const metadata: Metadata = { title: 'Paciente · SaludSimple' };
+export const metadata: Metadata = { title: 'Paciente · Mejoralito' };
 
 export default async function CuidadorPacientePage({
   params,

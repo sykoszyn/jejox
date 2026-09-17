@@ -7,7 +7,7 @@ import { EvolutionChart } from '@/features/measurements/EvolutionChart';
 import { resolveSimpleRange } from '@/lib/utils/datetime';
 import { TrendingUp } from 'lucide-react';
 
-export const metadata: Metadata = { title: 'Evolución de temperatura · SaludSimple' };
+export const metadata: Metadata = { title: 'Evolución de temperatura · Mejoralito' };
 
 export default async function EvolucionTemperaturaPage({
   searchParams,

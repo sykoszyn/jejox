@@ -3,7 +3,7 @@ import { requireProfile } from '@/lib/auth/session';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { ProfileForm } from '@/features/settings/ProfileForm';
 
-export const metadata: Metadata = { title: 'Perfil · SaludSimple' };
+export const metadata: Metadata = { title: 'Perfil · Mejoralito' };
 
 export default async function PerfilPage() {
   const { profile } = await requireProfile();

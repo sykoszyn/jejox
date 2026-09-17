@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { GlucoseForm } from '@/features/measurements/GlucoseForm';
 import { requireProfile } from '@/lib/auth/session';
 
-export const metadata: Metadata = { title: 'Registrar glucosa · SaludSimple' };
+export const metadata: Metadata = { title: 'Registrar glucosa · Mejoralito' };
 
 export default async function NuevaGlucosaPage() {
   const { profile } = await requireProfile();

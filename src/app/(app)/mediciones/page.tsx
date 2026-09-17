@@ -5,7 +5,7 @@ import { requireProfile } from '@/lib/auth/session';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Card } from '@/components/ui/Card';
 
-export const metadata: Metadata = { title: 'Mediciones · SaludSimple' };
+export const metadata: Metadata = { title: 'Mediciones · Mejoralito' };
 
 const METRICS = [
   { key: 'glucose' as const, label: 'Glucosa', icon: Droplet, base: '/mediciones/glucosa' },

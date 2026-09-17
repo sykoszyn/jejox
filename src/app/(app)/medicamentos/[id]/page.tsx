@@ -8,7 +8,7 @@ import { MedicationDetailActions } from '@/features/medications/MedicationDetail
 import { DAYS_OF_WEEK, MEDICATION_FORMS } from '@/lib/validations/medication';
 import { formatDateShort, formatTime } from '@/lib/utils/datetime';
 
-export const metadata: Metadata = { title: 'Medicamento · SaludSimple' };
+export const metadata: Metadata = { title: 'Medicamento · Mejoralito' };
 
 export default async function MedicamentoDetailPage({
   params,

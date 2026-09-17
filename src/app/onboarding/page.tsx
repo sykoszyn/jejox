@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { requireUser } from '@/lib/auth/session';
 import { OnboardingWizard } from './OnboardingWizard';
 
-export const metadata: Metadata = { title: 'Configurar tu salud · SaludSimple' };
+export const metadata: Metadata = { title: 'Configurar tu salud · Mejoralito' };
 
 export default async function OnboardingPage() {
   const { supabase, user } = await requireUser();

@@ -3,7 +3,7 @@ import { requireProfile } from '@/lib/auth/session';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { EmergencyContactManager } from '@/features/settings/EmergencyContactManager';
 
-export const metadata: Metadata = { title: 'Contacto de emergencia · SaludSimple' };
+export const metadata: Metadata = { title: 'Contacto de emergencia · Mejoralito' };
 
 export default async function EmergenciaPage() {
   const { supabase, profile } = await requireProfile();

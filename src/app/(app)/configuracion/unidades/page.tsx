@@ -3,7 +3,7 @@ import { requireProfile } from '@/lib/auth/session';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { UnitsForm } from '@/features/settings/UnitsForm';
 
-export const metadata: Metadata = { title: 'Unidades y mediciones · SaludSimple' };
+export const metadata: Metadata = { title: 'Unidades y mediciones · Mejoralito' };
 
 export default async function UnidadesPage() {
   const { profile } = await requireProfile();

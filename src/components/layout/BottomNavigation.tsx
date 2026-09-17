@@ -19,7 +19,7 @@ export function BottomNavigation() {
   return (
     <nav
       aria-label="Navegación principal"
-      className="no-print fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-border pb-[env(safe-area-inset-bottom)]"
+      className="no-print fixed bottom-0 left-0 right-0 z-40 bg-surface border-t-2 border-border pb-[env(safe-area-inset-bottom)]"
     >
       <ul className="grid grid-cols-5">
         {items.map(({ href, label, icon: Icon }) => {
@@ -34,7 +34,14 @@ export function BottomNavigation() {
                   active ? 'text-primary' : 'text-ink-muted'
                 )}
               >
-                <Icon size={24} aria-hidden="true" strokeWidth={active ? 2.5 : 2} />
+                <span
+                  className={cn(
+                    'flex items-center justify-center w-11 h-7 rounded-full',
+                    active && 'bg-primary-soft'
+                  )}
+                >
+                  <Icon size={22} aria-hidden="true" strokeWidth={active ? 2.5 : 2} />
+                </span>
                 <span>{label}</span>
               </Link>
             </li>

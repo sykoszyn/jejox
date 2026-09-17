@@ -9,7 +9,7 @@ import { formatDateLong, getZonedDateParts, zonedTimeToUtc } from '@/lib/utils/d
 import { History } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 
-export const metadata: Metadata = { title: 'Historial · SaludSimple' };
+export const metadata: Metadata = { title: 'Historial · Mejoralito' };
 
 type RangeKey = 'hoy' | '7d' | '30d' | 'personalizado';
 

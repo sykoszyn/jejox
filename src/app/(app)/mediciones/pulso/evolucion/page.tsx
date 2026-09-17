@@ -7,7 +7,7 @@ import { EvolutionChart } from '@/features/measurements/EvolutionChart';
 import { resolveSimpleRange } from '@/lib/utils/datetime';
 import { TrendingUp } from 'lucide-react';
 
-export const metadata: Metadata = { title: 'Evolución de pulso · SaludSimple' };
+export const metadata: Metadata = { title: 'Evolución de pulso · Mejoralito' };
 
 export default async function EvolucionPulsoPage({
   searchParams,

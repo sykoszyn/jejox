@@ -1,4 +1,4 @@
-// Service Worker de SaludSimple.
+// Service Worker de Mejoralito.
 //
 // Responsabilidades:
 // 1. Cachear el "app shell" para que la aplicacion abra aunque no haya
@@ -72,7 +72,7 @@ self.addEventListener('push', (event) => {
   try {
     payload = event.data.json();
   } catch {
-    payload = { title: 'SaludSimple', body: event.data.text() };
+    payload = { title: 'Mejoralito', body: event.data.text() };
   }
 
   const title = payload.title || 'Hora de tu medicamento';

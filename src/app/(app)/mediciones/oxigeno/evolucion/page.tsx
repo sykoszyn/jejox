@@ -7,7 +7,7 @@ import { EvolutionChart } from '@/features/measurements/EvolutionChart';
 import { resolveSimpleRange } from '@/lib/utils/datetime';
 import { TrendingUp } from 'lucide-react';
 
-export const metadata: Metadata = { title: 'Evolución de saturación · SaludSimple' };
+export const metadata: Metadata = { title: 'Evolución de saturación · Mejoralito' };
 
 export default async function EvolucionOxigenoPage({
   searchParams,

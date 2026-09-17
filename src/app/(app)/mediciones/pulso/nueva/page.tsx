@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { HeartRateForm } from '@/features/measurements/HeartRateForm';
 
-export const metadata: Metadata = { title: 'Registrar pulso · SaludSimple' };
+export const metadata: Metadata = { title: 'Registrar pulso · Mejoralito' };
 
 export default function NuevoPulsoPage() {
   return (

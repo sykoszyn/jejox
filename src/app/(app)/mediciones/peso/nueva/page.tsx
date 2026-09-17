@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { WeightForm } from '@/features/measurements/WeightForm';
 
-export const metadata: Metadata = { title: 'Registrar peso · SaludSimple' };
+export const metadata: Metadata = { title: 'Registrar peso · Mejoralito' };
 
 export default function NuevoPesoPage() {
   return (

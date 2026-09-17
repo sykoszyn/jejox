@@ -13,11 +13,16 @@ interface LargeButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
 }
 
+/* Los botones principales tienen un borde inferior sólido que se "hunde"
+ * al presionar (tacto físico, no solo un cambio de opacidad): ayuda a que
+ * quede clarísimo que el toque se registró, algo valioso para alguien que
+ * no está seguro de haber apretado bien. */
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-primary text-primary-contrast hover:bg-primary-dark active:bg-primary-dark',
-  accent: 'bg-accent text-accent-contrast hover:bg-accent-dark active:bg-accent-dark',
-  secondary:
-    'bg-surface text-ink border-2 border-border hover:bg-surface-muted active:bg-surface-muted',
+  primary:
+    'bg-primary text-primary-contrast shadow-[0_4px_0_var(--color-primary-dark)] active:shadow-none active:translate-y-1',
+  accent:
+    'bg-accent text-accent-contrast shadow-[0_4px_0_var(--color-accent-dark)] active:shadow-none active:translate-y-1',
+  secondary: 'bg-surface text-ink border-2 border-border hover:bg-surface-muted active:bg-surface-muted',
   danger: 'bg-danger text-white hover:opacity-90 active:opacity-90',
   ghost: 'bg-transparent text-ink hover:bg-surface-muted active:bg-surface-muted',
 };
@@ -46,7 +51,7 @@ export const LargeButton = forwardRef<HTMLButtonElement, LargeButtonProps>(funct
     <button
       ref={ref}
       className={cn(
-        'inline-flex items-center justify-center font-bold transition-colors',
+        'inline-flex items-center justify-center font-bold transition-[color,background-color,box-shadow,transform]',
         'disabled:opacity-50 disabled:cursor-not-allowed',
         variantClasses[variant],
         sizeClasses[size],

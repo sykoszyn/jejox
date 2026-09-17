@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { WifiOff } from 'lucide-react';
 
-export const metadata: Metadata = { title: 'Sin conexión · SaludSimple' };
+export const metadata: Metadata = { title: 'Sin conexión · Mejoralito' };
 
 export default function OfflinePage() {
   return (

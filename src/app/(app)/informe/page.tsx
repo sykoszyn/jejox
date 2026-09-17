@@ -13,7 +13,7 @@ import {
 } from '@/lib/utils/datetime';
 import { cn } from '@/lib/utils/cn';
 
-export const metadata: Metadata = { title: 'Informe de salud · SaludSimple' };
+export const metadata: Metadata = { title: 'Informe de salud · Mejoralito' };
 
 type PeriodKey = '7d' | '30d' | '3m' | 'personalizado';
 

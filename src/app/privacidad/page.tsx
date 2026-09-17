@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { LegalShell } from '@/components/layout/LegalShell';
 
-export const metadata: Metadata = { title: 'Política de privacidad · SaludSimple' };
+export const metadata: Metadata = { title: 'Política de privacidad · Mejoralito' };
 
 export default function PrivacidadPage() {
   return (
@@ -9,7 +9,7 @@ export default function PrivacidadPage() {
       <p className="text-ink-muted">Última actualización: {new Date().toLocaleDateString('es-AR')}</p>
 
       <p>
-        SaludSimple es una herramienta de registro y organización de información de salud. Esta
+        Mejoralito es una herramienta de registro y organización de información de salud. Esta
         política explica qué datos guardamos, para qué los usamos y qué derechos tenés sobre ellos.
       </p>
 
@@ -77,7 +77,7 @@ export default function PrivacidadPage() {
 
       <h2 className="text-xl font-bold mt-2">8. Aviso médico</h2>
       <p>
-        SaludSimple sirve para registrar y organizar información de salud. No diagnostica
+        Mejoralito sirve para registrar y organizar información de salud. No diagnostica
         enfermedades, no recomienda tratamientos y no reemplaza la consulta con un profesional de
         la salud.
       </p>

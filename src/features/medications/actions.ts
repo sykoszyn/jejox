@@ -143,6 +143,29 @@ export async function deactivateMedication(medicationId: string) {
   redirect('/medicamentos');
 }
 
+export async function deleteMedication(medicationId: string): Promise<MedicationActionResult | never> {
+  const { supabase, user } = await requireUser();
+
+  // Los horarios y el historial de tomas de este medicamento se borran en
+  // cascada (ver medication_logs.medication_id en 02_tables.sql). A
+  // diferencia de desactivar, esto es irreversible: por eso solo se llama
+  // desde una confirmación explícita del usuario, nunca automáticamente.
+  const { error } = await supabase
+    .from('medications')
+    .delete()
+    .eq('id', medicationId)
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('deleteMedication failed', error);
+    return { error: 'No pudimos eliminar el medicamento. Intentá nuevamente.' };
+  }
+
+  revalidatePath('/medicamentos');
+  revalidatePath('/inicio');
+  redirect('/medicamentos');
+}
+
 export async function reactivateMedication(medicationId: string) {
   const { supabase, user } = await requireUser();
   const { error } = await supabase

@@ -8,12 +8,16 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { MedicationCard } from '@/features/medications/MedicationCard';
 import type { MedicationSchedule } from '@/types/database';
 
-export const metadata: Metadata = { title: 'Medicamentos · SaludSimple' };
+export const metadata: Metadata = { title: 'Medicamentos · Mejoralito' };
 
 export default async function MedicamentosPage() {
   const { supabase, profile } = await requireProfile();
 
-  const [{ data: active }, { data: inactive }, { data: schedules }] = await Promise.all([
+  const [
+    { data: active, error: activeError },
+    { data: inactive, error: inactiveError },
+    { data: schedules, error: schedulesError },
+  ] = await Promise.all([
     supabase
       .from('medications')
       .select('*')
@@ -28,6 +32,10 @@ export default async function MedicamentosPage() {
       .order('updated_at', { ascending: false }),
     supabase.from('medication_schedules').select('*').eq('user_id', profile.id),
   ]);
+
+  if (activeError || inactiveError || schedulesError) {
+    console.error('MedicamentosPage: query failed', { activeError, inactiveError, schedulesError });
+  }
 
   const schedulesByMed = new Map<string, MedicationSchedule[]>();
   for (const s of schedules ?? []) {

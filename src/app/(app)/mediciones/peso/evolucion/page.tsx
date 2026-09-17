@@ -7,7 +7,7 @@ import { EvolutionChart } from '@/features/measurements/EvolutionChart';
 import { resolveSimpleRange } from '@/lib/utils/datetime';
 import { TrendingUp } from 'lucide-react';
 
-export const metadata: Metadata = { title: 'Evolución de peso · SaludSimple' };
+export const metadata: Metadata = { title: 'Evolución de peso · Mejoralito' };
 
 export default async function EvolucionPesoPage({
   searchParams,

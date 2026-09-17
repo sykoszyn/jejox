@@ -89,7 +89,7 @@ export function PushPermissionCard() {
 
       {status === 'denied' && (
         <p className="text-ink-muted flex items-center gap-2">
-          <BellOff size={18} /> Bloqueaste las notificaciones para SaludSimple. Para activarlas,
+          <BellOff size={18} /> Bloqueaste las notificaciones para Mejoralito. Para activarlas,
           cambiá el permiso desde la configuración del navegador.
         </p>
       )}

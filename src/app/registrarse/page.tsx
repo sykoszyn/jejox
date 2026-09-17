@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { AuthShell } from '@/components/layout/AuthShell';
 import { SignupForm } from './SignupForm';
 
-export const metadata: Metadata = { title: 'Crear cuenta · SaludSimple' };
+export const metadata: Metadata = { title: 'Crear cuenta · Mejoralito' };
 
 export default function SignupPage() {
   return (

@@ -16,7 +16,7 @@ export function AuthShell({
       <div className="w-full max-w-sm flex flex-col gap-8">
         <Link href="/" className="flex flex-col items-center gap-3">
           <Image src="/icons/icon-96.png" alt="" width={64} height={64} priority />
-          <span className="text-2xl font-extrabold text-primary">SaludSimple</span>
+          <span className="text-2xl font-extrabold text-primary">Mejoralito</span>
         </Link>
         <div className="text-center">
           <h1 className="text-2xl font-bold">{title}</h1>

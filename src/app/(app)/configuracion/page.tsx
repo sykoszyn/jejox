@@ -17,9 +17,10 @@ import {
 import { requireProfile } from '@/lib/auth/session';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Card } from '@/components/ui/Card';
+import { ThemeQuickToggle } from '@/features/settings/ThemeQuickToggle';
 import { signOut } from '@/lib/auth/actions';
 
-export const metadata: Metadata = { title: 'Configuración · SaludSimple' };
+export const metadata: Metadata = { title: 'Configuración · Mejoralito' };
 
 const LINKS = [
   { href: '/configuracion/perfil', label: 'Perfil', icon: User },
@@ -44,6 +45,8 @@ export default async function ConfiguracionPage() {
           <p className="text-ink-muted text-sm">Cuenta</p>
           <p className="text-lg font-bold">{user.first_name} {user.last_name}</p>
         </Card>
+
+        <ThemeQuickToggle theme={user.theme} textSize={user.text_size} highContrast={user.high_contrast} />
 
         <div className="flex flex-col gap-2">
           {LINKS.map(({ href, label, icon: Icon }) => (

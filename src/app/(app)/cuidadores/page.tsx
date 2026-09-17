@@ -8,7 +8,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { CaregiverInviteForm } from '@/features/caregivers/CaregiverInviteForm';
 import { InvitedCaregiverRow, ReceivedInvitationRow } from '@/features/caregivers/CaregiverRow';
 
-export const metadata: Metadata = { title: 'Cuidadores · SaludSimple' };
+export const metadata: Metadata = { title: 'Cuidadores · Mejoralito' };
 
 export default async function CuidadoresPage() {
   const { supabase, profile } = await requireProfile();

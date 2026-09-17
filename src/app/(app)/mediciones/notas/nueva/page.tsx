@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { NoteForm } from '@/features/measurements/NoteForm';
 
-export const metadata: Metadata = { title: 'Agregar nota · SaludSimple' };
+export const metadata: Metadata = { title: 'Agregar nota · Mejoralito' };
 
 export default function NuevaNotaPage() {
   return (

@@ -15,7 +15,7 @@ import {
   zonedTimeToUtc,
 } from '@/lib/utils/datetime';
 
-export const metadata: Metadata = { title: 'Inicio · SaludSimple' };
+export const metadata: Metadata = { title: 'Inicio · Mejoralito' };
 
 export default async function InicioPage() {
   const { supabase, profile } = await requireProfile();

@@ -1,4 +1,4 @@
-# SaludSimple
+# Mejoralito
 
 Web App / PWA mobile-first de gestión personal de salud, pensada para
 personas mayores y para los familiares o cuidadores que las ayudan.
@@ -8,7 +8,7 @@ mediciones (glucosa, presión, peso, temperatura, pulso, saturación), llevar
 un historial ordenado, ver gráficos simples de evolución y generar un
 informe para el médico.
 
-> **Aviso importante**: SaludSimple es una herramienta de registro y
+> **Aviso importante**: Mejoralito es una herramienta de registro y
 > organización de información de salud. No diagnostica enfermedades, no
 > recomienda tratamientos y no reemplaza la consulta con un profesional de
 > la salud.

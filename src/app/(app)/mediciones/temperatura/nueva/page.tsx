@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { TemperatureForm } from '@/features/measurements/TemperatureForm';
 
-export const metadata: Metadata = { title: 'Registrar temperatura · SaludSimple' };
+export const metadata: Metadata = { title: 'Registrar temperatura · Mejoralito' };
 
 export default function NuevaTemperaturaPage() {
   return (

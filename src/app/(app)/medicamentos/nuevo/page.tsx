@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { MedicationForm, emptyMedicationForm } from '@/features/medications/MedicationForm';
 import { createMedication } from '@/features/medications/actions';
 
-export const metadata: Metadata = { title: 'Agregar medicamento · SaludSimple' };
+export const metadata: Metadata = { title: 'Agregar medicamento · Mejoralito' };
 
 export default function NuevoMedicamentoPage() {
   return (

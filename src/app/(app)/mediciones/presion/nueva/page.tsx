@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { BloodPressureForm } from '@/features/measurements/BloodPressureForm';
 
-export const metadata: Metadata = { title: 'Registrar presión · SaludSimple' };
+export const metadata: Metadata = { title: 'Registrar presión · Mejoralito' };
 
 export default function NuevaPresionPage() {
   return (

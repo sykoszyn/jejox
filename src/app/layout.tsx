@@ -11,14 +11,14 @@ const bodyFont = Atkinson_Hyperlegible({
 });
 
 export const metadata: Metadata = {
-  title: 'SaludSimple',
+  title: 'Mejoralito',
   description:
     'Organizá tus medicamentos, registrá tus mediciones y llevá un historial simple de tu salud.',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'SaludSimple',
+    title: 'Mejoralito',
   },
   icons: {
     icon: [
@@ -33,7 +33,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#0f6e58',
+  themeColor: '#c1531d',
 };
 
 export default async function RootLayout({ children }: LayoutProps<'/'>) {

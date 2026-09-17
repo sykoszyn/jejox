@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { OxygenForm } from '@/features/measurements/OxygenForm';
 
-export const metadata: Metadata = { title: 'Registrar saturación · SaludSimple' };
+export const metadata: Metadata = { title: 'Registrar saturación · Mejoralito' };
 
 export default function NuevoOxigenoPage() {
   return (

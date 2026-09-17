@@ -42,10 +42,10 @@ export function InstallPwaCard() {
     <Card className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
         <Download className="text-primary" size={24} aria-hidden="true" />
-        <p className="text-lg font-bold">Instalar SaludSimple</p>
+        <p className="text-lg font-bold">Instalar Mejoralito</p>
       </div>
       <p className="text-ink-muted">
-        Podés agregar SaludSimple a la pantalla de inicio de tu teléfono para acceder más rápido,
+        Podés agregar Mejoralito a la pantalla de inicio de tu teléfono para acceder más rápido,
         como si fuera una aplicación.
       </p>
 
