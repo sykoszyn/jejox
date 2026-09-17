@@ -257,3 +257,22 @@ create policy "emergency_contacts_delete"
   on public.emergency_contacts for delete
   to authenticated
   using (user_id = auth.uid());
+
+-- =========================================================
+-- Permisos de tabla (GRANT)
+-- Las policies de arriba son necesarias pero no alcanzan: Postgres
+-- primero exige el permiso "de tabla" (GRANT) y recien despues, si lo
+-- tiene, evalua las policies de RLS fila por fila. Sin este GRANT,
+-- toda query del rol "authenticated" contra estas tablas falla con
+-- "permission denied for table ..." (SQLSTATE 42501), sin importar
+-- que las policies esten bien. El RLS de arriba sigue siendo el que
+-- de verdad restringe el acceso por fila.
+-- =========================================================
+grant usage on schema public to authenticated;
+
+grant select, insert, update, delete on all tables in schema public to authenticated;
+
+-- Para que las tablas que se creen mas adelante (si se agrega alguna)
+-- tengan este mismo permiso sin tener que acordarse de repetir el grant.
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to authenticated;

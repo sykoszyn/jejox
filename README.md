@@ -223,6 +223,13 @@ Handlers.
 - Los medicamentos y sus registros de toma **nunca se eliminan
   automáticamente**: desactivar un medicamento (`is_active = false`)
   conserva todo su historial.
+- Las policies de RLS **no alcanzan por sí solas**: Postgres primero exige
+  el permiso de tabla (`GRANT`) al rol `authenticated` y recién después
+  evalúa las policies fila por fila. `04_rls.sql` termina con los `GRANT
+  SELECT, INSERT, UPDATE, DELETE ... TO authenticated` necesarios para
+  esto. Si en algún momento ves un error `permission denied for table
+  ...` (código `42501`) es que falta este `GRANT` — volvé a correr esa
+  parte de `04_rls.sql` en el SQL Editor.
 
 ## Autenticación
 
