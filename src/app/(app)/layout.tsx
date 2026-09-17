@@ -1,25 +1,21 @@
 import type { ReactNode } from 'react';
 import { BottomNavigation } from '@/components/layout/BottomNavigation';
 import { ClientSync } from '@/features/settings/ClientSync';
-import { createClient } from '@/lib/supabase/server';
+import { getCachedProfile, getCachedUser } from '@/lib/auth/session';
 import { DEFAULT_TIMEZONE } from '@/lib/utils/datetime';
 import type { UiPrefsPayload } from '@/lib/preferencesShared';
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
   let timezone = DEFAULT_TIMEZONE;
   let prefs: UiPrefsPayload = { theme: 'claro', textSize: 'normal', highContrast: false };
 
   if (user) {
-    const { data } = await supabase
-      .from('profiles')
-      .select('timezone, theme, text_size, high_contrast')
-      .eq('id', user.id)
-      .single();
+    // Mismo helper cacheado que usa requireProfile() en la página: si la
+    // página también lo llama (siempre lo hace), esto no genera una
+    // segunda consulta a Supabase, reutiliza el resultado de esta.
+    const data = await getCachedProfile(user.id);
     if (data) {
       timezone = data.timezone;
       prefs = { theme: data.theme, textSize: data.text_size, highContrast: data.high_contrast };

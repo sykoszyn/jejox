@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Bell, ChevronDown } from 'lucide-react';
 import { LargeButton } from '@/components/ui/LargeButton';
 import { TextField, SelectField, TextareaField } from '@/components/ui/Field';
 import { DateSelector } from '@/components/ui/DateSelector';
 import { TimeSelector } from '@/components/ui/TimeSelector';
-import { Card } from '@/components/ui/Card';
 import { MEDICATION_FORMS, DAYS_OF_WEEK } from '@/lib/validations/medication';
 import type { MedicationActionResult } from './actions';
 
@@ -29,18 +28,49 @@ export interface MedicationFormDraft {
 }
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
+const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
+
+/** Horarios sugeridos según cuántas veces por día, espaciados a lo largo del día. */
+const DEFAULT_TIMES_BY_COUNT: Record<number, string[]> = {
+  1: ['08:00'],
+  2: ['08:00', '20:00'],
+  3: ['08:00', '14:00', '20:00'],
+  4: ['08:00', '12:00', '16:00', '20:00'],
+};
 
 export const emptyMedicationForm: MedicationFormDraft = {
   name: '',
   active_ingredient: '',
-  dose: '',
-  dose_unit: 'mg',
+  dose: '1',
+  dose_unit: 'dosis',
   form: 'comprimido',
   instructions: '',
   start_date: todayIso(),
   end_date: '',
-  schedules: [{ time_of_day: '08:00', days_of_week: [0, 1, 2, 3, 4, 5, 6] }],
+  schedules: [{ time_of_day: '08:00', days_of_week: ALL_DAYS }],
 };
+
+/** ¿Los datos "avanzados" tienen algo distinto del valor por defecto? Si es
+ * así abrimos "Más detalles" de entrada (por ej. al editar un medicamento
+ * que ya los tenía cargados), para no esconderle datos propios al usuario. */
+function hasNonDefaultDetails(values: MedicationFormDraft) {
+  return (
+    values.active_ingredient !== '' ||
+    values.instructions !== '' ||
+    values.end_date !== '' ||
+    values.form !== 'comprimido' ||
+    !(values.dose === '1' && values.dose_unit === 'dosis')
+  );
+}
+
+function allSameDays(schedules: ScheduleDraft[]) {
+  if (schedules.length === 0) return ALL_DAYS;
+  return schedules[0].days_of_week;
+}
+
+function isEveryDay(days: number[]) {
+  return ALL_DAYS.every((d) => days.includes(d));
+}
 
 export function MedicationForm({
   initialValues,
@@ -52,40 +82,47 @@ export function MedicationForm({
   onSubmit: (values: MedicationFormDraft) => Promise<MedicationActionResult | void>;
 }) {
   const [values, setValues] = useState(initialValues);
+  const [everyDay, setEveryDay] = useState(() => isEveryDay(allSameDays(initialValues.schedules)));
+  const [detailsOpen, setDetailsOpen] = useState(() => hasNonDefaultDetails(initialValues));
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState('');
   const [pending, startTransition] = useTransition();
 
-  function updateSchedule(index: number, patch: Partial<ScheduleDraft>) {
+  const timesPerDay = values.schedules.length;
+
+  function setTimesPerDay(count: number) {
+    setValues((v) => {
+      const defaults = DEFAULT_TIMES_BY_COUNT[count] ?? DEFAULT_TIMES_BY_COUNT[4];
+      const days = everyDay ? ALL_DAYS : allSameDays(v.schedules);
+      const schedules = Array.from({ length: count }, (_, i) => ({
+        time_of_day: v.schedules[i]?.time_of_day ?? defaults[i] ?? '08:00',
+        days_of_week: days,
+      }));
+      return { ...v, schedules };
+    });
+  }
+
+  function setScheduleTime(index: number, time: string) {
     setValues((v) => ({
       ...v,
-      schedules: v.schedules.map((s, i) => (i === index ? { ...s, ...patch } : s)),
+      schedules: v.schedules.map((s, i) => (i === index ? { ...s, time_of_day: time } : s)),
     }));
   }
 
-  function toggleDay(index: number, day: number) {
-    setValues((v) => ({
-      ...v,
-      schedules: v.schedules.map((s, i) => {
-        if (i !== index) return s;
-        const has = s.days_of_week.includes(day);
-        return {
-          ...s,
-          days_of_week: has ? s.days_of_week.filter((d) => d !== day) : [...s.days_of_week, day].sort(),
-        };
-      }),
-    }));
+  function toggleDay(day: number) {
+    setValues((v) => {
+      const current = allSameDays(v.schedules);
+      const has = current.includes(day);
+      const next = has ? current.filter((d) => d !== day) : [...current, day].sort();
+      return { ...v, schedules: v.schedules.map((s) => ({ ...s, days_of_week: next })) };
+    });
   }
 
-  function addSchedule() {
-    setValues((v) => ({
-      ...v,
-      schedules: [...v.schedules, { time_of_day: '08:00', days_of_week: [0, 1, 2, 3, 4, 5, 6] }],
-    }));
-  }
-
-  function removeSchedule(index: number) {
-    setValues((v) => ({ ...v, schedules: v.schedules.filter((_, i) => i !== index) }));
+  function handleEveryDayChange(value: boolean) {
+    setEveryDay(value);
+    if (value) {
+      setValues((v) => ({ ...v, schedules: v.schedules.map((s) => ({ ...s, days_of_week: ALL_DAYS })) }));
+    }
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -100,122 +137,173 @@ export function MedicationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-8" noValidate>
       <TextField
         label="Nombre del medicamento"
         value={values.name}
         onChange={(e) => setValues((v) => ({ ...v, name: e.target.value }))}
         error={fieldErrors.name}
         required
+        autoFocus
       />
-      <TextField
-        label="Principio activo (opcional)"
-        value={values.active_ingredient}
-        onChange={(e) => setValues((v) => ({ ...v, active_ingredient: e.target.value }))}
-      />
-      <div className="grid grid-cols-2 gap-4">
-        <TextField
-          label="Dosis"
-          type="number"
-          inputMode="decimal"
-          step="0.01"
-          min="0"
-          value={values.dose}
-          onChange={(e) => setValues((v) => ({ ...v, dose: e.target.value }))}
-          error={fieldErrors.dose}
-          required
-        />
-        <TextField
-          label="Unidad"
-          placeholder="mg, ml, UI…"
-          value={values.dose_unit}
-          onChange={(e) => setValues((v) => ({ ...v, dose_unit: e.target.value }))}
-          error={fieldErrors.dose_unit}
-          required
-        />
-      </div>
-      <SelectField
-        label="Forma"
-        value={values.form}
-        onChange={(e) => setValues((v) => ({ ...v, form: e.target.value }))}
-      >
-        {MEDICATION_FORMS.map((f) => (
-          <option key={f.value} value={f.value}>
-            {f.label}
-          </option>
-        ))}
-      </SelectField>
-      <TextareaField
-        label="Indicaciones / notas (opcional)"
-        placeholder="Ej: tomar con el desayuno"
-        value={values.instructions}
-        onChange={(e) => setValues((v) => ({ ...v, instructions: e.target.value }))}
-      />
-      <div className="grid grid-cols-2 gap-4">
-        <DateSelector
-          label="Fecha de inicio"
-          value={values.start_date}
-          onChange={(e) => setValues((v) => ({ ...v, start_date: e.target.value }))}
-          error={fieldErrors.start_date}
-        />
-        <DateSelector
-          label="Fecha de fin (opcional)"
-          value={values.end_date}
-          onChange={(e) => setValues((v) => ({ ...v, end_date: e.target.value }))}
-          error={fieldErrors.end_date}
-        />
-      </div>
 
       <fieldset className="flex flex-col gap-4">
-        <legend className="text-lg font-bold mb-1">Horarios</legend>
-        {values.schedules.map((schedule, index) => (
-          <Card key={index} className="flex flex-col gap-4">
-            <div className="flex items-end gap-3">
-              <div className="flex-1">
-                <TimeSelector
-                  label={`Horario ${index + 1}`}
-                  value={schedule.time_of_day}
-                  onChange={(e) => updateSchedule(index, { time_of_day: e.target.value })}
-                />
-              </div>
-              {values.schedules.length > 1 && (
+        <legend className="text-lg font-bold mb-1">¿Cuántas veces por día?</legend>
+        <div className="flex gap-2">
+          {[1, 2, 3, 4].map((n) => (
+            <button
+              key={n}
+              type="button"
+              onClick={() => setTimesPerDay(n)}
+              aria-pressed={timesPerDay === n}
+              className={`flex-1 min-h-14 rounded-xl font-bold border-2 tap-target ${
+                timesPerDay === n
+                  ? 'bg-primary text-primary-contrast border-primary'
+                  : 'bg-surface text-ink border-border'
+              }`}
+            >
+              {n} {n === 1 ? 'vez' : 'veces'}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {values.schedules.map((schedule, index) => (
+            <TimeSelector
+              key={index}
+              label={timesPerDay === 1 ? 'Horario' : `Horario ${index + 1}`}
+              value={schedule.time_of_day}
+              onChange={(e) => setScheduleTime(index, e.target.value)}
+            />
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset className="flex flex-col gap-4">
+        <legend className="text-lg font-bold mb-1">¿Todos los días?</legend>
+        <div className="flex gap-3">
+          <LargeButton
+            type="button"
+            variant={everyDay ? 'primary' : 'secondary'}
+            onClick={() => handleEveryDayChange(true)}
+            fullWidth
+          >
+            Sí, todos los días
+          </LargeButton>
+          <LargeButton
+            type="button"
+            variant={!everyDay ? 'primary' : 'secondary'}
+            onClick={() => handleEveryDayChange(false)}
+            fullWidth
+          >
+            No
+          </LargeButton>
+        </div>
+        {!everyDay && (
+          <div className="flex flex-wrap gap-2">
+            {DAYS_OF_WEEK.map((day) => {
+              const active = allSameDays(values.schedules).includes(day.value);
+              return (
                 <button
                   type="button"
-                  onClick={() => removeSchedule(index)}
-                  aria-label={`Eliminar horario ${index + 1}`}
-                  className="tap-target text-danger flex items-center justify-center rounded-xl border-2 border-border"
+                  key={day.value}
+                  onClick={() => toggleDay(day.value)}
+                  aria-pressed={active}
+                  aria-label={day.label}
+                  className={`w-11 h-11 rounded-full font-bold border-2 tap-target ${
+                    active
+                      ? 'bg-primary text-primary-contrast border-primary'
+                      : 'bg-surface text-ink-muted border-border'
+                  }`}
                 >
-                  <Trash2 size={22} />
+                  {day.short}
                 </button>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {DAYS_OF_WEEK.map((day) => {
-                const active = schedule.days_of_week.includes(day.value);
-                return (
-                  <button
-                    type="button"
-                    key={day.value}
-                    onClick={() => toggleDay(index, day.value)}
-                    aria-pressed={active}
-                    aria-label={day.label}
-                    className={`w-11 h-11 rounded-full font-bold border-2 tap-target ${
-                      active
-                        ? 'bg-primary text-primary-contrast border-primary'
-                        : 'bg-surface text-ink-muted border-border'
-                    }`}
-                  >
-                    {day.short}
-                  </button>
-                );
-              })}
-            </div>
-          </Card>
-        ))}
-        <LargeButton type="button" variant="secondary" icon={<Plus size={20} />} onClick={addSchedule}>
-          Agregar horario
-        </LargeButton>
+              );
+            })}
+          </div>
+        )}
       </fieldset>
+
+      <p className="flex items-center gap-3 text-ink-muted text-base">
+        <Bell size={20} className="text-primary shrink-0" aria-hidden="true" />
+        Vamos a avisarte con una alarma a cada horario, hasta que la marques como tomada.
+      </p>
+
+      <div>
+        <button
+          type="button"
+          onClick={() => setDetailsOpen((v) => !v)}
+          aria-expanded={detailsOpen}
+          className="flex items-center gap-2 text-primary font-bold tap-target"
+        >
+          <ChevronDown
+            size={20}
+            className={`transition-transform ${detailsOpen ? 'rotate-180' : ''}`}
+            aria-hidden="true"
+          />
+          Más detalles (opcional)
+        </button>
+
+        {detailsOpen && (
+          <div className="flex flex-col gap-6 mt-4">
+            <TextField
+              label="Principio activo (opcional)"
+              value={values.active_ingredient}
+              onChange={(e) => setValues((v) => ({ ...v, active_ingredient: e.target.value }))}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <TextField
+                label="Dosis"
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min="0"
+                value={values.dose}
+                onChange={(e) => setValues((v) => ({ ...v, dose: e.target.value }))}
+                error={fieldErrors.dose}
+              />
+              <TextField
+                label="Unidad"
+                placeholder="mg, ml, UI…"
+                value={values.dose_unit}
+                onChange={(e) => setValues((v) => ({ ...v, dose_unit: e.target.value }))}
+                error={fieldErrors.dose_unit}
+              />
+            </div>
+            <SelectField
+              label="Forma"
+              value={values.form}
+              onChange={(e) => setValues((v) => ({ ...v, form: e.target.value }))}
+            >
+              {MEDICATION_FORMS.map((f) => (
+                <option key={f.value} value={f.value}>
+                  {f.label}
+                </option>
+              ))}
+            </SelectField>
+            <TextareaField
+              label="Indicaciones / notas (opcional)"
+              placeholder="Ej: tomar con el desayuno"
+              value={values.instructions}
+              onChange={(e) => setValues((v) => ({ ...v, instructions: e.target.value }))}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <DateSelector
+                label="Fecha de inicio"
+                value={values.start_date}
+                onChange={(e) => setValues((v) => ({ ...v, start_date: e.target.value }))}
+                error={fieldErrors.start_date}
+              />
+              <DateSelector
+                label="Fecha de fin (opcional)"
+                value={values.end_date}
+                onChange={(e) => setValues((v) => ({ ...v, end_date: e.target.value }))}
+                error={fieldErrors.end_date}
+              />
+            </div>
+          </div>
+        )}
+      </div>
 
       {error && (
         <p role="alert" className="text-danger font-medium">
