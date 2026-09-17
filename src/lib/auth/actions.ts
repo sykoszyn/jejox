@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { signInSchema, signUpSchema, magicLinkSchema } from '@/lib/validations/auth';
 
@@ -10,8 +11,17 @@ export interface AuthFormState {
   success?: string;
 }
 
-function getSiteUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+/**
+ * Arma la URL base a partir de los headers de la request en vez de una
+ * variable de entorno fija: así los links de confirmación/enlace mágico
+ * apuntan siempre al dominio real (localhost en desarrollo, el dominio de
+ * Vercel en producción) sin tener que configurar nada aparte.
+ */
+async function getSiteUrl() {
+  const h = await headers();
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3000';
+  const protocol = h.get('x-forwarded-proto') ?? (host.startsWith('localhost') ? 'http' : 'https');
+  return `${protocol}://${host}`;
 }
 
 export async function signInWithPassword(
@@ -52,12 +62,13 @@ export async function signUpWithPassword(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const siteUrl = await getSiteUrl();
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       data: { first_name: parsed.data.firstName },
-      emailRedirectTo: `${getSiteUrl()}/auth/callback?next=/onboarding`,
+      emailRedirectTo: `${siteUrl}/auth/callback?next=/onboarding`,
     },
   });
 
@@ -66,6 +77,13 @@ export async function signUpWithPassword(
       return { error: 'Ya existe una cuenta con ese correo. Probá iniciar sesión.' };
     }
     return { error: 'No pudimos crear tu cuenta. Intentá nuevamente en unos minutos.' };
+  }
+
+  // Si "Confirm email" está desactivado en Supabase, signUp ya devuelve una
+  // sesión activa (no se envía ningún correo): entramos directo, en vez de
+  // pedirle que revise una bandeja de entrada donde no va a llegar nada.
+  if (data.session) {
+    redirect('/onboarding');
   }
 
   return {
@@ -85,10 +103,11 @@ export async function sendMagicLink(
   }
 
   const supabase = await createClient();
+  const siteUrl = await getSiteUrl();
   const { error } = await supabase.auth.signInWithOtp({
     email: parsed.data.email,
     options: {
-      emailRedirectTo: `${getSiteUrl()}/auth/callback?next=/inicio`,
+      emailRedirectTo: `${siteUrl}/auth/callback?next=/inicio`,
       shouldCreateUser: true,
     },
   });
