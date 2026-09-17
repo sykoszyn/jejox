@@ -16,10 +16,7 @@ const METRIC_OPTIONS: { key: keyof EnabledMetrics; label: string; icon: React.Re
   { key: 'oxygen', label: 'Saturación de oxígeno', icon: <Wind size={22} /> },
 ];
 
-const TOTAL_STEPS = 4;
-
 export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: string }) {
-  const [step, setStep] = useState(1);
   const [firstName, setFirstName] = useState(defaultFirstName);
   const [lastName, setLastName] = useState('');
   const [metrics, setMetrics] = useState<EnabledMetrics>({
@@ -31,7 +28,7 @@ export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: strin
     oxygen: true,
   });
   const [remindersEnabled, setRemindersEnabled] = useState(true);
-  const [wantsEmergencyContact, setWantsEmergencyContact] = useState<boolean | null>(null);
+  const [showEmergencyContact, setShowEmergencyContact] = useState(false);
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [contactRelationship, setContactRelationship] = useState('');
@@ -42,21 +39,15 @@ export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: strin
     setMetrics((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
-  function next() {
-    if (step === 1 && !firstName.trim()) {
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!firstName.trim()) {
       setError('Por favor ingresá tu nombre.');
       return;
     }
     setError('');
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS));
-  }
 
-  function back() {
-    setError('');
-    setStep((s) => Math.max(s - 1, 1));
-  }
-
-  function finish() {
     startTransition(async () => {
       const result = await completeOnboarding({
         firstName,
@@ -64,7 +55,7 @@ export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: strin
         enabledMetrics: metrics,
         remindersEnabled,
         emergencyContact:
-          wantsEmergencyContact && contactName && contactPhone
+          showEmergencyContact && contactName && contactPhone
             ? { name: contactName, phone: contactPhone, relationship: contactRelationship }
             : null,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -74,135 +65,110 @@ export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: strin
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      <div
-        role="progressbar"
-        aria-valuenow={step}
-        aria-valuemin={1}
-        aria-valuemax={TOTAL_STEPS}
-        aria-label={`Paso ${step} de ${TOTAL_STEPS}`}
-        className="flex gap-2"
-      >
-        {Array.from({ length: TOTAL_STEPS }, (_, i) => (
-          <span
-            key={i}
-            className={`h-2 flex-1 rounded-full ${i < step ? 'bg-primary' : 'bg-surface-muted'}`}
-          />
-        ))}
-      </div>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+      <section className="flex flex-col gap-5">
+        <h1 className="text-2xl font-bold">¿Cómo te llamás?</h1>
+        <TextField
+          label="Nombre"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          autoComplete="given-name"
+          required
+        />
+        <TextField
+          label="Apellido (opcional)"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          autoComplete="family-name"
+        />
+      </section>
 
-      {step === 1 && (
-        <section className="flex flex-col gap-5">
-          <h1 className="text-2xl font-bold">¿Cómo te llamás?</h1>
-          <TextField
-            label="Nombre"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            autoComplete="given-name"
-            required
-          />
-          <TextField
-            label="Apellido (opcional)"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            autoComplete="family-name"
-          />
-        </section>
-      )}
+      <section className="flex flex-col gap-5">
+        <h1 className="text-2xl font-bold">¿Qué querés registrar?</h1>
+        <p className="text-ink-muted text-base">
+          Elegí lo que te interese. Podés cambiar esto más adelante desde Configuración.
+        </p>
+        <div className="flex flex-col gap-3">
+          {METRIC_OPTIONS.map(({ key, label, icon }) => (
+            <label
+              key={key}
+              className="flex items-center gap-4 p-4 rounded-2xl border-2 border-border bg-surface cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-soft"
+            >
+              <input
+                type="checkbox"
+                checked={metrics[key]}
+                onChange={() => toggleMetric(key)}
+                className="w-6 h-6 accent-primary"
+              />
+              <span className="text-primary" aria-hidden="true">
+                {icon}
+              </span>
+              <span className="text-lg font-medium">{label}</span>
+            </label>
+          ))}
+        </div>
+      </section>
 
-      {step === 2 && (
-        <section className="flex flex-col gap-5">
-          <h1 className="text-2xl font-bold">¿Qué querés registrar?</h1>
-          <p className="text-ink-muted text-base">
-            Podés cambiar esto más adelante desde Configuración.
-          </p>
-          <div className="flex flex-col gap-3">
-            {METRIC_OPTIONS.map(({ key, label, icon }) => (
-              <label
-                key={key}
-                className="flex items-center gap-4 p-4 rounded-2xl border-2 border-border bg-surface cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-soft"
+      <section className="flex flex-col gap-3">
+        <label className="flex items-center gap-4 p-4 rounded-2xl border-2 border-border bg-surface cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-soft">
+          <input
+            type="checkbox"
+            checked={remindersEnabled}
+            onChange={(e) => setRemindersEnabled(e.target.checked)}
+            className="w-6 h-6 accent-primary"
+          />
+          <span className="text-primary" aria-hidden="true">
+            <Bell size={22} />
+          </span>
+          <span className="text-lg font-medium">Avisarme cuando sea hora de tomar mis medicamentos</span>
+        </label>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        {!showEmergencyContact ? (
+          <button
+            type="button"
+            onClick={() => setShowEmergencyContact(true)}
+            className="flex items-center gap-4 p-4 rounded-2xl border-2 border-dashed border-border bg-surface text-left"
+          >
+            <span className="text-primary" aria-hidden="true">
+              <ShieldPlus size={22} />
+            </span>
+            <span className="text-lg font-medium">Agregar un contacto de emergencia (opcional)</span>
+          </button>
+        ) : (
+          <div className="flex flex-col gap-4 p-4 rounded-2xl border-2 border-border bg-surface">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-lg font-bold">Contacto de emergencia</h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEmergencyContact(false);
+                  setContactName('');
+                  setContactPhone('');
+                  setContactRelationship('');
+                }}
+                className="text-ink-muted font-medium underline tap-target"
               >
-                <input
-                  type="checkbox"
-                  checked={metrics[key]}
-                  onChange={() => toggleMetric(key)}
-                  className="w-6 h-6 accent-primary"
-                />
-                <span className="text-primary" aria-hidden="true">
-                  {icon}
-                </span>
-                <span className="text-lg font-medium">{label}</span>
-              </label>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {step === 3 && (
-        <section className="flex flex-col gap-5">
-          <Bell className="text-primary" size={40} aria-hidden="true" />
-          <h1 className="text-2xl font-bold">¿Querés recibir recordatorios?</h1>
-          <p className="text-ink-muted text-base">
-            Te avisaremos cuando sea hora de tomar tus medicamentos.
-          </p>
-          <div className="flex gap-3">
-            <LargeButton
-              variant={remindersEnabled ? 'primary' : 'secondary'}
-              onClick={() => setRemindersEnabled(true)}
-              fullWidth
-            >
-              Sí
-            </LargeButton>
-            <LargeButton
-              variant={!remindersEnabled ? 'primary' : 'secondary'}
-              onClick={() => setRemindersEnabled(false)}
-              fullWidth
-            >
-              No
-            </LargeButton>
-          </div>
-        </section>
-      )}
-
-      {step === 4 && (
-        <section className="flex flex-col gap-5">
-          <ShieldPlus className="text-primary" size={40} aria-hidden="true" />
-          <h1 className="text-2xl font-bold">¿Querés agregar un contacto de emergencia?</h1>
-          <div className="flex gap-3">
-            <LargeButton
-              variant={wantsEmergencyContact === true ? 'primary' : 'secondary'}
-              onClick={() => setWantsEmergencyContact(true)}
-              fullWidth
-            >
-              Sí
-            </LargeButton>
-            <LargeButton
-              variant={wantsEmergencyContact === false ? 'primary' : 'secondary'}
-              onClick={() => setWantsEmergencyContact(false)}
-              fullWidth
-            >
-              Ahora no
-            </LargeButton>
-          </div>
-          {wantsEmergencyContact && (
-            <div className="flex flex-col gap-4 mt-2">
-              <TextField label="Nombre" value={contactName} onChange={(e) => setContactName(e.target.value)} />
-              <TextField
-                label="Teléfono"
-                type="tel"
-                value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
-              />
-              <TextField
-                label="Relación (opcional)"
-                value={contactRelationship}
-                onChange={(e) => setContactRelationship(e.target.value)}
-                placeholder="Hija, esposo, vecino…"
-              />
+                Quitar
+              </button>
             </div>
-          )}
-        </section>
-      )}
+            <TextField label="Nombre" value={contactName} onChange={(e) => setContactName(e.target.value)} />
+            <TextField
+              label="Teléfono"
+              type="tel"
+              value={contactPhone}
+              onChange={(e) => setContactPhone(e.target.value)}
+            />
+            <TextField
+              label="Relación (opcional)"
+              value={contactRelationship}
+              onChange={(e) => setContactRelationship(e.target.value)}
+              placeholder="Hija, esposo, vecino…"
+            />
+          </div>
+        )}
+      </section>
 
       {error && (
         <p role="alert" className="text-danger font-medium">
@@ -210,22 +176,9 @@ export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: strin
         </p>
       )}
 
-      <div className="flex gap-3">
-        {step > 1 && (
-          <LargeButton variant="secondary" onClick={back} disabled={pending}>
-            Atrás
-          </LargeButton>
-        )}
-        {step < TOTAL_STEPS ? (
-          <LargeButton onClick={next} fullWidth>
-            Continuar
-          </LargeButton>
-        ) : (
-          <LargeButton onClick={finish} loading={pending} fullWidth>
-            Listo, empezar
-          </LargeButton>
-        )}
-      </div>
-    </div>
+      <LargeButton type="submit" loading={pending} fullWidth>
+        Listo, empezar
+      </LargeButton>
+    </form>
   );
 }

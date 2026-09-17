@@ -35,6 +35,7 @@ export async function completeOnboarding(payload: OnboardingPayload) {
     .eq('id', user.id);
 
   if (profileError) {
+    console.error('completeOnboarding: profiles.update failed', profileError);
     return { error: 'No pudimos guardar tus datos. Revisá tu conexión e intentá nuevamente.' };
   }
 
