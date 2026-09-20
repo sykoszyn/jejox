@@ -160,7 +160,7 @@ export default async function InformePage({
               role="tab"
               aria-selected={period === p.key}
               className={cn(
-                'shrink-0 px-4 py-2.5 rounded-full font-bold border-2 tap-target',
+                'shrink-0 px-4 py-2.5 rounded-full font-bold border tap-target',
                 period === p.key
                   ? 'bg-primary text-primary-contrast border-primary'
                   : 'bg-surface text-ink border-border'
@@ -183,7 +183,7 @@ export default async function InformePage({
                 name="desde"
                 type="date"
                 defaultValue={params.desde}
-                className="min-h-12 text-lg px-3 rounded-xl border-2 border-border bg-surface"
+                className="min-h-12 text-lg px-3 rounded-xl border border-border bg-surface"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -195,7 +195,7 @@ export default async function InformePage({
                 name="hasta"
                 type="date"
                 defaultValue={params.hasta}
-                className="min-h-12 text-lg px-3 rounded-xl border-2 border-border bg-surface"
+                className="min-h-12 text-lg px-3 rounded-xl border border-border bg-surface"
               />
             </div>
             <button
@@ -210,7 +210,7 @@ export default async function InformePage({
         <PrintButton />
 
         {/* Contenido imprimible */}
-        <article className="flex flex-col gap-6 bg-surface border border-border rounded-2xl p-6 print:border-0 print:p-0">
+        <article className="flex flex-col gap-6 bg-surface border border-border rounded-xl p-6 print:border-0 print:p-0">
           <header className="flex flex-col gap-1 border-b border-border pb-4">
             <h1 className="text-2xl font-extrabold">Informe de salud</h1>
             <p className="text-lg">

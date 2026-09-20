@@ -12,7 +12,7 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <header className="sticky top-0 z-30 bg-bg/95 backdrop-blur border-b-2 border-border px-4 py-4 flex items-center gap-2">
+    <header className="sticky top-0 z-30 bg-bg/95 backdrop-blur border-b border-border px-4 py-4 flex items-center gap-2">
       {backHref && (
         <Link
           href={backHref}

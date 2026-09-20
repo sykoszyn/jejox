@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import { requireProfile } from '@/lib/auth/session';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { Card } from '@/components/ui/Card';
 import { ThemeQuickToggle } from '@/features/settings/ThemeQuickToggle';
 import { signOut } from '@/lib/auth/actions';
 
@@ -41,37 +40,42 @@ export default async function ConfiguracionPage() {
     <div>
       <PageHeader title="Configuración" />
       <div className="px-4 py-6 max-w-2xl mx-auto flex flex-col gap-6">
-        <Card>
+        <div>
           <p className="text-ink-muted text-sm">Cuenta</p>
-          <p className="text-lg font-bold">{user.first_name} {user.last_name}</p>
-        </Card>
+          <p className="text-lg font-bold">
+            {user.first_name} {user.last_name}
+          </p>
+        </div>
 
         <ThemeQuickToggle theme={user.theme} textSize={user.text_size} highContrast={user.high_contrast} />
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col rounded-xl border border-border overflow-hidden divide-y divide-border">
           {LINKS.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} className="tap-target">
-              <Card className="flex items-center gap-4">
-                <Icon className="text-primary shrink-0" size={22} aria-hidden="true" />
-                <span className="flex-1 font-semibold">{label}</span>
-                <ChevronRight className="text-ink-muted" aria-hidden="true" />
-              </Card>
+            <Link
+              key={href}
+              href={href}
+              className="flex items-center gap-4 px-4 py-4 tap-target hover:bg-surface-muted"
+            >
+              <Icon className="text-primary shrink-0" size={20} aria-hidden="true" />
+              <span className="flex-1 font-medium">{label}</span>
+              <ChevronRight className="text-ink-muted" size={18} aria-hidden="true" />
             </Link>
           ))}
 
-          <a href="/api/export" className="tap-target">
-            <Card className="flex items-center gap-4">
-              <Download className="text-primary shrink-0" size={22} aria-hidden="true" />
-              <span className="flex-1 font-semibold">Exportar mis datos</span>
-              <ChevronRight className="text-ink-muted" aria-hidden="true" />
-            </Card>
+          <a
+            href="/api/export"
+            className="flex items-center gap-4 px-4 py-4 tap-target hover:bg-surface-muted"
+          >
+            <Download className="text-primary shrink-0" size={20} aria-hidden="true" />
+            <span className="flex-1 font-medium">Exportar mis datos</span>
+            <ChevronRight className="text-ink-muted" size={18} aria-hidden="true" />
           </a>
         </div>
 
         <form action={signOut}>
           <button
             type="submit"
-            className="flex items-center justify-center gap-2 w-full min-h-14 rounded-2xl border-2 border-danger text-danger font-bold tap-target"
+            className="flex items-center justify-center gap-2 w-full min-h-14 rounded-xl border border-danger text-danger font-semibold tap-target"
           >
             <LogOut size={20} aria-hidden="true" /> Cerrar sesión
           </button>

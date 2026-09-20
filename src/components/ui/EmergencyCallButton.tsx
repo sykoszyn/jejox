@@ -11,7 +11,7 @@ export function EmergencyCallButton({ name, phone }: { name: string; phone: stri
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center justify-center gap-2 w-full min-h-14 rounded-2xl bg-accent text-accent-contrast font-extrabold text-lg tap-target"
+        className="flex items-center justify-center gap-2 w-full min-h-14 rounded-xl bg-accent text-accent-contrast font-extrabold text-lg tap-target"
       >
         <PhoneCall size={22} aria-hidden="true" /> CONTACTO DE EMERGENCIA
       </button>

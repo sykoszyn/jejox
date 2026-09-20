@@ -69,7 +69,7 @@ export function ProfileForm({ userId, initial }: ProfileFormProps) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-3">
-        <div className="relative w-24 h-24 rounded-full bg-surface-muted border-2 border-border overflow-hidden flex items-center justify-center">
+        <div className="relative w-24 h-24 rounded-full bg-surface-muted border border-border overflow-hidden flex items-center justify-center">
           {values.avatar_url ? (
             <Image src={values.avatar_url} alt="" fill className="object-cover" />
           ) : (

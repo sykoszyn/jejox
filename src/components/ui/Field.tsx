@@ -2,7 +2,7 @@ import type { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes 
 import { cn } from '@/lib/utils/cn';
 
 const inputClasses =
-  'min-h-14 text-lg px-4 rounded-xl border-2 border-border bg-surface text-ink focus:border-primary w-full';
+  'min-h-14 text-lg px-4 rounded-xl border border-border bg-surface text-ink focus:border-primary w-full';
 
 interface BaseFieldProps {
   label: string;

@@ -63,7 +63,7 @@ export function AccessibilityForm({
           {TEXT_SIZE_OPTIONS.map((opt) => (
             <label
               key={opt.value}
-              className="flex items-center gap-4 p-4 rounded-2xl border-2 border-border bg-surface cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-soft"
+              className="flex items-center gap-4 p-4 rounded-xl border border-border bg-surface cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-soft"
             >
               <input
                 type="radio"
@@ -101,7 +101,7 @@ export function AccessibilityForm({
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-bold">Alto contraste</h2>
-        <label className="flex items-center gap-4 p-4 rounded-2xl border-2 border-border bg-surface cursor-pointer">
+        <label className="flex items-center gap-4 p-4 rounded-xl border border-border bg-surface cursor-pointer">
           <input
             type="checkbox"
             checked={highContrast}

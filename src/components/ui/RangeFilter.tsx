@@ -17,7 +17,7 @@ export function RangeFilter({ basePath, selected }: { basePath: string; selected
           role="tab"
           aria-selected={selected === o.days}
           className={cn(
-            'px-4 py-2 rounded-full font-bold border-2 tap-target',
+            'px-4 py-2 rounded-full font-bold border tap-target',
             selected === o.days
               ? 'bg-primary text-primary-contrast border-primary'
               : 'bg-surface text-ink border-border'

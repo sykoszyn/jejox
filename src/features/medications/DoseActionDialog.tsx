@@ -94,7 +94,7 @@ export function DoseActionDialog({
         onClose();
       }}
       aria-labelledby="dose-dialog-title"
-      className="rounded-3xl border-2 border-border p-0 bg-surface text-ink max-w-sm w-[92vw] backdrop:bg-black/60"
+      className="rounded-xl border border-border p-0 bg-surface text-ink max-w-sm w-[92vw] backdrop:bg-black/60"
     >
       <div className="p-6 flex flex-col items-center gap-4 text-center">
         <Pill className="text-primary" size={48} aria-hidden="true" />

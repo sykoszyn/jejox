@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Droplet, HeartPulse, Scale, Thermometer, Activity, Wind, StickyNote } from 'lucide-react';
 import { requireProfile } from '@/lib/auth/session';
 import { getDosesForDay } from '@/lib/medications/schedule';
 import { getLatestReadings } from '@/features/measurements/getLatestReadings';
 import { TodayMedicationsSection, type DoseViewModel } from '@/features/medications/TodayMedicationsSection';
 import { HealthMetricCard } from '@/components/ui/HealthMetricCard';
-import { QuickActionButton } from '@/components/ui/QuickActionButton';
 import { EmergencyCallButton } from '@/components/ui/EmergencyCallButton';
 import {
   greetingForHour,
@@ -63,7 +63,7 @@ export default async function InicioPage() {
     <div className="px-4 pt-6 pb-8 max-w-2xl mx-auto flex flex-col gap-8">
       <header>
         <p className="text-ink-muted capitalize">{formatDateLong(now, tz)}</p>
-        <h1 className="text-3xl font-extrabold">
+        <h1 className="text-3xl font-bold">
           {greetingForHour(now, tz)}, {profile.first_name || 'bienvenido'}
         </h1>
       </header>
@@ -142,35 +142,13 @@ export default async function InicioPage() {
             />
           )}
         </div>
-      </section>
-
-      <section aria-labelledby="acciones-rapidas" className="flex flex-col gap-4">
-        <h2 id="acciones-rapidas" className="text-lg font-bold text-ink-muted">
-          Acciones rápidas
-        </h2>
-        <div className="grid grid-cols-3 gap-3">
-          {profile.enabled_metrics.glucose && (
-            <QuickActionButton href="/mediciones/glucosa/nueva" icon={<Droplet size={26} />} label="Glucosa" />
-          )}
-          {profile.enabled_metrics.blood_pressure && (
-            <QuickActionButton
-              href="/mediciones/presion/nueva"
-              icon={<HeartPulse size={26} />}
-              label="Presión"
-            />
-          )}
-          {profile.enabled_metrics.weight && (
-            <QuickActionButton href="/mediciones/peso/nueva" icon={<Scale size={26} />} label="Peso" />
-          )}
-          {profile.enabled_metrics.temperature && (
-            <QuickActionButton
-              href="/mediciones/temperatura/nueva"
-              icon={<Thermometer size={26} />}
-              label="Temperatura"
-            />
-          )}
-          <QuickActionButton href="/mediciones/notas/nueva" icon={<StickyNote size={26} />} label="Nota" />
-        </div>
+        <Link
+          href="/mediciones/notas/nueva"
+          className="flex items-center gap-2 text-primary font-semibold tap-target"
+        >
+          <StickyNote size={20} aria-hidden="true" />
+          Agregar una nota
+        </Link>
       </section>
 
       {emergencyContact && (

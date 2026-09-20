@@ -40,7 +40,7 @@ export function ConfirmDialog({
         e.preventDefault();
         onCancel();
       }}
-      className="rounded-2xl border-2 border-border p-0 bg-surface text-ink max-w-sm w-[90vw] backdrop:bg-black/50"
+      className="rounded-xl border border-border p-0 bg-surface text-ink max-w-sm w-[90vw] backdrop:bg-black/50"
       aria-labelledby="confirm-dialog-title"
     >
       <div className="p-6 flex flex-col gap-4">

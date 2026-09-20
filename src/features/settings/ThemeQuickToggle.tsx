@@ -41,7 +41,7 @@ export function ThemeQuickToggle({
       onClick={toggle}
       disabled={pending}
       aria-pressed={isDark}
-      className="flex items-center gap-4 p-4 rounded-2xl border-2 border-border bg-surface w-full tap-target disabled:opacity-60"
+      className="flex items-center gap-4 p-4 rounded-xl border border-border bg-surface w-full tap-target disabled:opacity-60"
     >
       {isDark ? (
         <Moon className="text-primary shrink-0" size={22} aria-hidden="true" />
@@ -52,7 +52,7 @@ export function ThemeQuickToggle({
       <span
         aria-hidden="true"
         className={`relative w-12 h-7 rounded-full shrink-0 transition-colors ${
-          isDark ? 'bg-primary' : 'bg-surface-muted border-2 border-border'
+          isDark ? 'bg-primary' : 'bg-surface-muted border border-border'
         }`}
       >
         <span

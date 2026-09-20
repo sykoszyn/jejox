@@ -156,7 +156,7 @@ export function MedicationForm({
               type="button"
               onClick={() => setTimesPerDay(n)}
               aria-pressed={timesPerDay === n}
-              className={`flex-1 min-h-14 rounded-xl font-bold border-2 tap-target ${
+              className={`flex-1 min-h-14 rounded-xl font-bold border tap-target ${
                 timesPerDay === n
                   ? 'bg-primary text-primary-contrast border-primary'
                   : 'bg-surface text-ink border-border'
@@ -210,7 +210,7 @@ export function MedicationForm({
                   onClick={() => toggleDay(day.value)}
                   aria-pressed={active}
                   aria-label={day.label}
-                  className={`w-11 h-11 rounded-full font-bold border-2 tap-target ${
+                  className={`w-11 h-11 rounded-full font-bold border tap-target ${
                     active
                       ? 'bg-primary text-primary-contrast border-primary'
                       : 'bg-surface text-ink-muted border-border'

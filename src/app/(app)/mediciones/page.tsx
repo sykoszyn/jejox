@@ -31,7 +31,7 @@ export default async function MedicionesPage() {
               <Link
                 href={`${base}/evolucion`}
                 aria-label={`Ver evolución de ${label}`}
-                className="tap-target flex items-center justify-center rounded-xl border-2 border-border"
+                className="tap-target flex items-center justify-center rounded-xl border border-border"
               >
                 <TrendingUp size={22} aria-hidden="true" />
               </Link>

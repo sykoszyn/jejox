@@ -36,8 +36,8 @@
 
   --color-focus-ring: #8e1c1c;
 
-  --radius-card: 1rem;
-  --radius-button: 0.85rem;
+  --radius-card: 0.75rem;
+  --radius-button: 0.6rem;
 
   --font-scale: 1;
 }

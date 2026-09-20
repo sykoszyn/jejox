@@ -33,7 +33,7 @@ export function InvitedCaregiverRow({ id, email, permission, status }: { id: str
         disabled={pending}
         onClick={() => startTransition(async () => { await revokeCaregiver(id); })}
         aria-label={`Quitar acceso a ${email}`}
-        className="tap-target text-danger flex items-center justify-center rounded-xl border-2 border-border"
+        className="tap-target text-danger flex items-center justify-center rounded-xl border border-border"
       >
         <Ban size={20} />
       </button>

@@ -15,8 +15,8 @@ export function AuthShell({
     <main id="contenido-principal" className="flex-1 flex flex-col items-center px-6 py-10">
       <div className="w-full max-w-sm flex flex-col gap-8">
         <Link href="/" className="flex flex-col items-center gap-3">
-          <Image src="/icons/icon-96.png" alt="" width={64} height={64} priority />
-          <span className="text-2xl font-extrabold text-primary">Mejoralito</span>
+          <Image src="/icons/icon-96.png" alt="" width={56} height={56} priority className="rounded-xl" />
+          <span className="text-xl font-bold text-primary">Mejoralito</span>
         </Link>
         <div className="text-center">
           <h1 className="text-2xl font-bold">{title}</h1>

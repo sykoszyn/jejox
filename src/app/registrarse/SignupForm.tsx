@@ -14,7 +14,7 @@ export function SignupForm() {
 
   if (state.success) {
     return (
-      <p role="status" className="text-center text-lg bg-primary-soft text-primary-dark rounded-2xl p-5">
+      <p role="status" className="text-center text-lg bg-primary-soft text-primary-dark rounded-xl p-5">
         {state.success}
       </p>
     );

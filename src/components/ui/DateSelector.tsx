@@ -19,7 +19,7 @@ export function DateSelector({ label, error, id, className, ...props }: DateSele
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${inputId}-error` : undefined}
         className={cn(
-          'min-h-14 text-lg px-4 rounded-xl border-2 border-border bg-surface text-ink',
+          'min-h-14 text-lg px-4 rounded-xl border border-border bg-surface text-ink',
           'focus:border-primary',
           error && 'border-danger',
           className

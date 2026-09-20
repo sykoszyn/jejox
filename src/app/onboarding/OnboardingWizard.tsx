@@ -92,7 +92,7 @@ export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: strin
           {METRIC_OPTIONS.map(({ key, label, icon }) => (
             <label
               key={key}
-              className="flex items-center gap-4 p-4 rounded-2xl border-2 border-border bg-surface cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-soft"
+              className="flex items-center gap-4 p-4 rounded-xl border border-border bg-surface cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-soft"
             >
               <input
                 type="checkbox"
@@ -110,7 +110,7 @@ export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: strin
       </section>
 
       <section className="flex flex-col gap-3">
-        <label className="flex items-center gap-4 p-4 rounded-2xl border-2 border-border bg-surface cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-soft">
+        <label className="flex items-center gap-4 p-4 rounded-xl border border-border bg-surface cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary-soft">
           <input
             type="checkbox"
             checked={remindersEnabled}
@@ -129,7 +129,7 @@ export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: strin
           <button
             type="button"
             onClick={() => setShowEmergencyContact(true)}
-            className="flex items-center gap-4 p-4 rounded-2xl border-2 border-dashed border-border bg-surface text-left"
+            className="flex items-center gap-4 p-4 rounded-xl border border-dashed border-border bg-surface text-left"
           >
             <span className="text-primary" aria-hidden="true">
               <ShieldPlus size={22} />
@@ -137,7 +137,7 @@ export function OnboardingWizard({ defaultFirstName }: { defaultFirstName: strin
             <span className="text-lg font-medium">Agregar un contacto de emergencia (opcional)</span>
           </button>
         ) : (
-          <div className="flex flex-col gap-4 p-4 rounded-2xl border-2 border-border bg-surface">
+          <div className="flex flex-col gap-4 p-4 rounded-xl border border-border bg-surface">
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-lg font-bold">Contacto de emergencia</h2>
               <button

@@ -66,7 +66,7 @@ export function EmergencyContactManager({ contacts }: { contacts: EmergencyConta
           </button>
           <button
             onClick={() => startTransition(() => deleteEmergencyContact(c.id))}
-            className="tap-target flex items-center justify-center rounded-xl border-2 border-border text-danger"
+            className="tap-target flex items-center justify-center rounded-xl border border-border text-danger"
             aria-label={`Eliminar contacto ${c.name}`}
           >
             <Trash2 size={20} />

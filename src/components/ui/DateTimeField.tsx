@@ -31,7 +31,7 @@ export function DateTimeField({ label, error, id, className, ...props }: DateTim
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${inputId}-error` : undefined}
         className={cn(
-          'min-h-14 text-lg px-4 rounded-xl border-2 border-border bg-surface text-ink focus:border-primary',
+          'min-h-14 text-lg px-4 rounded-xl border border-border bg-surface text-ink focus:border-primary',
           error && 'border-danger',
           className
         )}

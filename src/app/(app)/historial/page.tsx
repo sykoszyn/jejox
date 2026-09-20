@@ -74,7 +74,7 @@ export default async function HistorialPage({
               role="tab"
               aria-selected={range === f.key}
               className={cn(
-                'shrink-0 px-4 py-2.5 rounded-full font-bold border-2 tap-target',
+                'shrink-0 px-4 py-2.5 rounded-full font-bold border tap-target',
                 range === f.key
                   ? 'bg-primary text-primary-contrast border-primary'
                   : 'bg-surface text-ink border-border'
@@ -97,7 +97,7 @@ export default async function HistorialPage({
                 name="desde"
                 type="date"
                 defaultValue={params.desde}
-                className="min-h-12 text-lg px-3 rounded-xl border-2 border-border bg-surface"
+                className="min-h-12 text-lg px-3 rounded-xl border border-border bg-surface"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -109,7 +109,7 @@ export default async function HistorialPage({
                 name="hasta"
                 type="date"
                 defaultValue={params.hasta}
-                className="min-h-12 text-lg px-3 rounded-xl border-2 border-border bg-surface"
+                className="min-h-12 text-lg px-3 rounded-xl border border-border bg-surface"
               />
             </div>
             <button
