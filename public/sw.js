@@ -13,7 +13,7 @@
 // pero tampoco esta garantizado si el navegador esta completamente cerrado
 // y el sistema restringe procesos en segundo plano.
 
-const CACHE_NAME = 'saludsimple-v1';
+const CACHE_NAME = 'mejoralito-v2';
 const OFFLINE_URL = '/offline';
 
 const APP_SHELL = [
