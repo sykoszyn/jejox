@@ -27,7 +27,17 @@ export interface MedicationFormDraft {
   schedules: ScheduleDraft[];
 }
 
-const todayIso = () => new Date().toISOString().slice(0, 10);
+/** Fecha de HOY en el calendario local del dispositivo (no UTC). Con
+ * `toISOString()` (que siempre da la fecha en UTC) alguien en Argentina que
+ * agrega un medicamento a la noche podía terminar con un start_date de
+ * "mañana" sin darse cuenta, y esa toma de hoy directamente no aparecía. */
+function todayIso() {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 const ALL_DAYS = [0, 1, 2, 3, 4, 5, 6];
 
 /** Horarios sugeridos según cuántas veces por día, espaciados a lo largo del día. */
