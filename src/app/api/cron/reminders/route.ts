@@ -67,6 +67,11 @@ export async function GET(request: Request) {
     .eq('reminders_enabled', true);
 
   let sent = 0;
+  let failed = 0;
+  let lastError: string | null = null;
+  let due = 0;
+  let pending = 0;
+  let withoutSubscription = 0;
 
   for (const profile of profiles ?? []) {
     const local = getZonedDateParts(now, profile.timezone);
@@ -92,6 +97,7 @@ export async function GET(request: Request) {
     }
 
     if (dueOccurrences.length === 0) continue;
+    due += dueOccurrences.length;
 
     const { data: medications } = await supabase
       .from('medications')
@@ -126,12 +132,16 @@ export async function GET(request: Request) {
     });
 
     if (stillPending.length === 0) continue;
+    pending += stillPending.length;
 
     const { data: subscriptions } = await supabase
       .from('push_subscriptions')
       .select('id, endpoint, p256dh, auth')
       .eq('user_id', profile.id);
-    if (!subscriptions || subscriptions.length === 0) continue;
+    if (!subscriptions || subscriptions.length === 0) {
+      withoutSubscription += 1;
+      continue;
+    }
 
     for (const { schedule, scheduledFor } of stillPending) {
       const med = medById.get(schedule.medication_id);
@@ -161,6 +171,8 @@ export async function GET(request: Request) {
           if (statusCode === 404 || statusCode === 410) {
             await supabase.from('push_subscriptions').delete().eq('id', sub.id);
           } else {
+            failed += 1;
+            lastError = statusCode ? `HTTP ${statusCode}` : String((err as Error)?.message ?? err);
             console.error('cron/reminders: sendNotification failed', { statusCode, err });
           }
         }
@@ -168,5 +180,13 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({ ok: true, sent });
+  // Se devuelve el detalle en la respuesta (no solo en los logs de Vercel)
+  // para poder diagnosticar mirando directamente la ejecucion en el panel
+  // del cron externo (cron-job.org), sin necesitar acceso a los logs del
+  // servidor: due = tomas vencidas encontradas, pending = de esas, las que
+  // todavia no se resolvieron, withoutSubscription = perfiles con una toma
+  // pendiente pero sin ningun dispositivo suscripto a push, sent = envios
+  // que el servidor de push aceptó, failed = envios que fallaron por un
+  // motivo distinto a "suscripcion vencida".
+  return NextResponse.json({ ok: true, due, pending, withoutSubscription, sent, failed, lastError });
 }
